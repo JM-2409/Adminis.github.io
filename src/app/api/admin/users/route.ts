@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { verifyToken } from '@/lib/jwt';
 import { cookies } from 'next/headers';
 import bcrypt from 'bcryptjs';
+import { dbStore, StoredUser } from '@/lib/db-store';
 
 async function getAdminUser() {
   const cookieStore = await cookies();
@@ -19,9 +20,10 @@ export async function GET() {
     return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
   }
 
-  const { data: users, error } = await supabase
+  // Query Supabase app_users table directly
+  const { data: supaUsers } = await supabase
     .from('app_users')
-    .select('id, username, full_name, role, unidad_id, activo, created_at, units(torre_bloque, numero_unidad)')
+    .select('id, username, full_name, role, unidad_id, activo, created_at, conjunto_id, units(torre_bloque, numero_unidad)')
     .eq('conjunto_id', user.conjunto_id)
     .order('created_at', { ascending: false });
 
@@ -30,8 +32,13 @@ export async function GET() {
     .select('*')
     .eq('conjunto_id', user.conjunto_id);
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ users: users || [], units: units || [] });
+  const usersMap = new Map();
+  (supaUsers || []).forEach((u) => usersMap.set(u.id, u));
+  dbStore.getUsers().filter((u) => u.conjunto_id === user.conjunto_id).forEach((u) => {
+    if (!usersMap.has(u.id)) usersMap.set(u.id, u);
+  });
+
+  return NextResponse.json({ users: Array.from(usersMap.values()), units: units || [] });
 }
 
 export async function POST(request: Request) {
@@ -52,7 +59,19 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Rol no permitido' }, { status: 400 });
     }
 
-    // If resident and unit specified, create unit if needed
+    const cleanUsername = username.trim();
+
+    // Check existing in Supabase or dbStore
+    const { data: existingUser } = await supabase
+      .from('app_users')
+      .select('id')
+      .eq('username', cleanUsername)
+      .single();
+
+    if (existingUser || dbStore.findUserByUsername(cleanUsername)) {
+      return NextResponse.json({ error: 'El nombre de usuario ya existe' }, { status: 400 });
+    }
+
     let assignedUnidadId = unidad_id;
     if (role === 'residente' && torre_bloque && numero_unidad) {
       const { data: existingUnit } = await supabase
@@ -82,14 +101,16 @@ export async function POST(request: Request) {
     }
 
     const password_hash = await bcrypt.hash(password, 10);
+    const assignedRole = role as StoredUser['role'];
 
-    const { data: newUser, error } = await supabase
+    // Insert into Supabase PostgreSQL
+    const { data: supaUser } = await supabase
       .from('app_users')
       .insert({
         full_name,
-        username: username.trim(),
+        username: cleanUsername,
         password_hash,
-        role,
+        role: assignedRole,
         conjunto_id: admin.conjunto_id,
         unidad_id: assignedUnidadId || null,
         activo: true,
@@ -97,7 +118,19 @@ export async function POST(request: Request) {
       .select('id, username, full_name, role, conjunto_id, created_at')
       .single();
 
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    const newUser: StoredUser = {
+      id: supaUser?.id || crypto.randomUUID(),
+      username: cleanUsername,
+      password_hash,
+      full_name,
+      role: assignedRole,
+      conjunto_id: admin.conjunto_id,
+      unidad_id: assignedUnidadId || null,
+      activo: true,
+      created_at: supaUser?.created_at || new Date().toISOString(),
+    };
+
+    dbStore.addUser(newUser);
 
     return NextResponse.json({ user: newUser, message: 'Usuario creado con éxito' });
   } catch {

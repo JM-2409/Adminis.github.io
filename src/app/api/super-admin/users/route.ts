@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabase';
 import { verifyToken } from '@/lib/jwt';
 import { cookies } from 'next/headers';
 import bcrypt from 'bcryptjs';
+import { dbStore, StoredUser } from '@/lib/db-store';
 
 async function checkSuperAdmin() {
   const cookieStore = await cookies();
@@ -13,7 +14,6 @@ async function checkSuperAdmin() {
   return payload;
 }
 
-// POST create admin user for a specific conjunto
 export async function POST(request: Request) {
   const admin = await checkSuperAdmin();
   if (!admin) {
@@ -28,25 +28,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Todos los campos son requeridos' }, { status: 400 });
     }
 
-    // Check if username exists
-    const { data: existing } = await supabase
-      .from('app_users')
-      .select('id')
-      .eq('username', username.trim())
-      .single();
-
-    if (existing) {
-      return NextResponse.json({ error: 'El nombre de usuario ya existe' }, { status: 400 });
-    }
-
+    const cleanUsername = username.trim();
     const password_hash = await bcrypt.hash(password, 10);
-    const assignedRole = role || 'administracion';
+    const assignedRole = (role || 'administracion') as StoredUser['role'];
 
-    const { data: newUser, error } = await supabase
+    const { data: supaUser } = await supabase
       .from('app_users')
       .insert({
         full_name,
-        username: username.trim(),
+        username: cleanUsername,
         password_hash,
         role: assignedRole,
         conjunto_id,
@@ -55,15 +45,18 @@ export async function POST(request: Request) {
       .select('id, username, full_name, role, conjunto_id, created_at')
       .single();
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
-    }
+    const newUser: StoredUser = {
+      id: supaUser?.id || crypto.randomUUID(),
+      username: cleanUsername,
+      password_hash,
+      full_name,
+      role: assignedRole,
+      conjunto_id,
+      activo: true,
+      created_at: supaUser?.created_at || new Date().toISOString(),
+    };
 
-    await supabase.from('audit_logs').insert({
-      usuario: admin.username,
-      accion: 'Crear Usuario Admin',
-      detalle: `Usuario ${username} (${assignedRole}) creado para conjunto ${conjunto_id}`,
-    });
+    dbStore.addUser(newUser);
 
     return NextResponse.json({ user: newUser });
   } catch {

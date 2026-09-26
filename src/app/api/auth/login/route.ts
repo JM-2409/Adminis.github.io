@@ -2,13 +2,13 @@ import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { supabase } from '@/lib/supabase';
 import { signToken } from '@/lib/jwt';
+import { dbStore } from '@/lib/db-store';
 
-// In-memory rate limiter: IP -> { attempts, lastAttempt }
 const loginAttempts = new Map<string, { count: number; firstAttempt: number }>();
 
 function checkRateLimit(ip: string): boolean {
   const now = Date.now();
-  const windowMs = 15 * 60 * 1000; // 15 mins
+  const windowMs = 15 * 60 * 1000;
   const maxAttempts = 5;
 
   const record = loginAttempts.get(ip);
@@ -48,14 +48,25 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Usuario y contraseña son requeridos' }, { status: 400 });
     }
 
-    // Query app_users
-    const { data: user, error } = await supabase
-      .from('app_users')
-      .select('*')
-      .eq('username', username.trim())
-      .single();
+    const cleanUsername = username.trim();
 
-    if (error || !user) {
+    // 1. Check in dbStore first
+    let user = dbStore.findUserByUsername(cleanUsername);
+
+    // 2. If not found in dbStore, check in Supabase
+    if (!user) {
+      const { data: supaUser } = await supabase
+        .from('app_users')
+        .select('*')
+        .eq('username', cleanUsername)
+        .single();
+
+      if (supaUser) {
+        user = supaUser as any;
+      }
+    }
+
+    if (!user) {
       return NextResponse.json({ error: 'Credenciales inválidas' }, { status: 401 });
     }
 
@@ -78,7 +89,6 @@ export async function POST(request: Request) {
       full_name: user.full_name,
     });
 
-    // Reset rate limit on success
     loginAttempts.delete(ip);
 
     const response = NextResponse.json({

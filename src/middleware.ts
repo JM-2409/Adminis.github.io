@@ -17,7 +17,6 @@ export async function middleware(request: NextRequest) {
   const token = request.cookies.get('auth_token')?.value;
   const { pathname } = request.nextUrl;
 
-  // Protected route check
   const protectedRoutes = ['/super-admin', '/admin', '/vigilante', '/residente', '/presidente'];
   const isProtectedRoute = protectedRoutes.some((route) => pathname.startsWith(route));
 
@@ -32,13 +31,11 @@ export async function middleware(request: NextRequest) {
     const { payload } = await jwtVerify(token, secretKey);
     const userRole = payload.role as string;
 
-    // If logged in user hits login page ('/'), redirect to their assigned dashboard
     if (pathname === '/') {
       const redirectUrl = ROLE_ROUTES[userRole] || '/admin';
       return NextResponse.redirect(new URL(redirectUrl, request.url));
     }
 
-    // Role-based route enforcement
     if (pathname.startsWith('/super-admin') && userRole !== 'super_admin') {
       return NextResponse.redirect(new URL(ROLE_ROUTES[userRole] || '/', request.url));
     }
@@ -61,7 +58,6 @@ export async function middleware(request: NextRequest) {
 
     return NextResponse.next();
   } catch {
-    // Invalid/expired token
     if (isProtectedRoute) {
       const response = NextResponse.redirect(new URL('/', request.url));
       response.cookies.delete('auth_token');

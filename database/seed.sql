@@ -100,3 +100,22 @@ INSERT INTO private_parkings (
     'ABC123',
     'Carlos Residente'
 ) ON CONFLICT (conjunto_id, codigo) DO NOTHING;
+
+-- Insert Seed Users with real bcrypt hashed passwords:
+-- admin.prueba / Admin123: $2b$10$.4PvbeWZLT6ktTB3hTlYNe0j5hiRtLRsDgn/8Y.6OwK/DzPHaaNrC
+-- vigilante1 / Vig123: $2b$10$Qu8.5okHmIiqBnpR6zHwmOjeExoCUD.9cjsVrcx3cpD2Z0ISAnA2K
+-- torreA101 / Resi123: $2b$10$h0AHLU5yU.zk.QKoAOAHwOlUiKXchD2xrnQmYeWjI.xTgM.eNQf8e
+INSERT INTO app_users (
+    id,
+    username,
+    password_hash,
+    full_name,
+    role,
+    conjunto_id,
+    unidad_id,
+    activo
+) VALUES
+('u1111111-0000-0000-0000-000000000001', 'admin.prueba', '$2b$10$.4PvbeWZLT6ktTB3hTlYNe0j5hiRtLRsDgn/8Y.6OwK/DzPHaaNrC', 'Admin Prueba', 'administracion', 'a1b2c3d4-0000-0000-0000-000000000001', NULL, TRUE),
+('u2222222-0000-0000-0000-000000000002', 'vigilante1', '$2b$10$Qu8.5okHmIiqBnpR6zHwmOjeExoCUD.9cjsVrcx3cpD2Z0ISAnA2K', 'Vigilante Principal', 'vigilante', 'a1b2c3d4-0000-0000-0000-000000000001', NULL, TRUE),
+('u3333333-0000-0000-0000-000000000003', 'torreA101', '$2b$10$h0AHLU5yU.zk.QKoAOAHwOlUiKXchD2xrnQmYeWjI.xTgM.eNQf8e', 'Carlos Residente', 'residente', 'a1b2c3d4-0000-0000-0000-000000000001', 'u1b2c3d4-0000-0000-0000-000000000101', TRUE)
+ON CONFLICT (username) DO NOTHING;

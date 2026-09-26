@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import {
   Building2, Users, ShieldCheck, Plus, Edit, CheckCircle, AlertTriangle, XCircle, LogOut, RefreshCw, KeyRound, UserPlus
 } from 'lucide-react';
@@ -32,6 +32,7 @@ interface AppUser {
 }
 
 export default function SuperAdminDashboard() {
+  const router = useRouter();
   const [conjuntos, setConjuntos] = useState<Conjunto[]>([]);
   const [users, setUsers] = useState<AppUser[]>([]);
   const [loading, setLoading] = useState(true);
@@ -81,7 +82,7 @@ export default function SuperAdminDashboard() {
 
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
-    window.location.href = '/';
+    router.push('/');
   };
 
   const handleCreateConjunto = async (e: React.FormEvent) => {
@@ -219,7 +220,6 @@ export default function SuperAdminDashboard() {
 
       {/* Main Content */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-6 space-y-8">
-        {/* Banner info */}
         {message && (
           <div className="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-400 text-sm">
             {message}

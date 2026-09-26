@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS private_parkings (
     UNIQUE(conjunto_id, codigo)
 );
 
--- 5. Visitor Parkings Table (Grid V-01 to V-20)
+-- 5. Visitor Parkings Table
 CREATE TABLE IF NOT EXISTS visitor_parkings (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     conjunto_id UUID NOT NULL REFERENCES conjuntos(id) ON DELETE CASCADE,
@@ -80,7 +80,7 @@ CREATE TABLE IF NOT EXISTS visitor_parkings (
     UNIQUE(conjunto_id, codigo)
 );
 
--- 6. Parking Tariffs Table
+-- 6. Tariffs Table
 CREATE TABLE IF NOT EXISTS tariffs (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     conjunto_id UUID NOT NULL UNIQUE REFERENCES conjuntos(id) ON DELETE CASCADE,
@@ -187,4 +187,71 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     detalle TEXT,
     ip_address VARCHAR(45),
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ENABLE ROW LEVEL SECURITY ON ALL TABLES
+ALTER TABLE conjuntos ENABLE ROW LEVEL SECURITY;
+ALTER TABLE units ENABLE ROW LEVEL SECURITY;
+ALTER TABLE app_users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE private_parkings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE visitor_parkings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE tariffs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE access_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE packages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE common_areas ENABLE ROW LEVEL SECURITY;
+ALTER TABLE reservations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE fines ENABLE ROW LEVEL SECURITY;
+ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
+
+-- ROW LEVEL SECURITY POLICIES FOR TENANT ISOLATION (BY CONJUNTO_ID)
+CREATE POLICY "conjuntos_select" ON conjuntos FOR SELECT USING (true);
+CREATE POLICY "conjuntos_all" ON conjuntos FOR ALL USING (true);
+
+CREATE POLICY "units_tenant_isolation" ON units FOR ALL USING (
+  conjunto_id IS NULL OR conjunto_id = (NULLIF(current_setting('app.current_conjunto_id', true), ''))::uuid
+);
+
+CREATE POLICY "app_users_tenant_isolation" ON app_users FOR ALL USING (
+  conjunto_id IS NULL OR conjunto_id = (NULLIF(current_setting('app.current_conjunto_id', true), ''))::uuid
+);
+
+CREATE POLICY "private_parkings_tenant_isolation" ON private_parkings FOR ALL USING (
+  conjunto_id = (NULLIF(current_setting('app.current_conjunto_id', true), ''))::uuid
+);
+
+CREATE POLICY "visitor_parkings_tenant_isolation" ON visitor_parkings FOR ALL USING (
+  conjunto_id = (NULLIF(current_setting('app.current_conjunto_id', true), ''))::uuid
+);
+
+CREATE POLICY "tariffs_tenant_isolation" ON tariffs FOR ALL USING (
+  conjunto_id = (NULLIF(current_setting('app.current_conjunto_id', true), ''))::uuid
+);
+
+CREATE POLICY "access_logs_tenant_isolation" ON access_logs FOR ALL USING (
+  conjunto_id = (NULLIF(current_setting('app.current_conjunto_id', true), ''))::uuid
+);
+
+CREATE POLICY "packages_tenant_isolation" ON packages FOR ALL USING (
+  conjunto_id = (NULLIF(current_setting('app.current_conjunto_id', true), ''))::uuid
+);
+
+CREATE POLICY "common_areas_tenant_isolation" ON common_areas FOR ALL USING (
+  conjunto_id = (NULLIF(current_setting('app.current_conjunto_id', true), ''))::uuid
+);
+
+CREATE POLICY "reservations_tenant_isolation" ON reservations FOR ALL USING (
+  conjunto_id = (NULLIF(current_setting('app.current_conjunto_id', true), ''))::uuid
+);
+
+CREATE POLICY "fines_tenant_isolation" ON fines FOR ALL USING (
+  conjunto_id = (NULLIF(current_setting('app.current_conjunto_id', true), ''))::uuid
+);
+
+CREATE POLICY "payments_tenant_isolation" ON payments FOR ALL USING (
+  conjunto_id = (NULLIF(current_setting('app.current_conjunto_id', true), ''))::uuid
+);
+
+CREATE POLICY "audit_logs_tenant_isolation" ON audit_logs FOR ALL USING (
+  conjunto_id = (NULLIF(current_setting('app.current_conjunto_id', true), ''))::uuid
 );
