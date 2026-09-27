@@ -15,3 +15,5 @@
  GET /admin/zonas-comunes 200 in 436ms (next.js: 334ms, application-code: 102ms)
  GET /admin/trasteos 200 in 432ms (next.js: 330ms, application-code: 101ms)
  GET /admin/anuncios 200 in 455ms (next.js: 356ms, application-code: 99ms)
+ GET /admin 200 in 919ms (next.js: 88ms, application-code: 831ms)
+ GET /admin 200 in 262ms (next.js: 20ms, application-code: 242ms)
