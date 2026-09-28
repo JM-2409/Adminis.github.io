@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Building2, ShieldCheck, UserCheck, ShieldAlert, KeyRound, User } from "lucide-react";
+import { Building2, ShieldCheck, UserCheck, ShieldAlert, KeyRound, User, PlusCircle } from "lucide-react";
+import Link from "next/link";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -44,7 +45,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col justify-center py-12 sm:px-6 lg:px-8 text-slate-100">
+    <div className="min-h-screen bg-slate-950 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 text-slate-100 font-sans">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <div className="flex items-center justify-center space-x-3 mb-3">
           <div className="p-3 bg-blue-600 rounded-xl shadow-lg shadow-blue-500/20">
@@ -60,8 +61,8 @@ export default function LoginPage() {
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-slate-900 border border-slate-800 py-8 px-4 shadow-2xl sm:rounded-xl sm:px-10">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+        <div className="bg-slate-900 border border-slate-800 py-8 px-4 shadow-2xl rounded-2xl sm:px-10 space-y-6">
+          <form className="space-y-5" onSubmit={handleSubmit}>
             {error && (
               <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-center gap-2">
                 <ShieldAlert className="w-5 h-5 shrink-0" />
@@ -83,7 +84,7 @@ export default function LoginPage() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Ingrese su usuario"
-                  className="block w-full pl-10 pr-3 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className="block w-full pl-10 pr-3 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                 />
               </div>
             </div>
@@ -102,7 +103,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="block w-full pl-10 pr-3 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  className="block w-full pl-10 pr-3 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                 />
               </div>
             </div>
@@ -110,14 +111,24 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 transition duration-150"
+              className="w-full flex justify-center py-3 px-4 rounded-lg font-bold text-white bg-blue-600 hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 transition text-sm uppercase tracking-wider"
             >
               {loading ? "Ingresando..." : "Iniciar Sesión"}
             </button>
           </form>
 
+          {/* Opción Crear Súper Usuario */}
+          <div className="border-t border-slate-800 pt-4 text-center">
+            <Link
+              href="/register-super-admin"
+              className="inline-flex items-center gap-2 text-xs font-semibold text-amber-400 hover:text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 px-3 py-2 rounded-lg border border-amber-500/30 transition w-full justify-center"
+            >
+              <PlusCircle className="w-4 h-4" /> Crear Súper Usuario (Dueño de Plataforma)
+            </Link>
+          </div>
+
           {/* Cuentas Demo Rápidas */}
-          <div className="mt-8 border-t border-slate-800 pt-6">
+          <div className="border-t border-slate-800 pt-4">
             <p className="text-xs text-slate-400 font-medium mb-3 text-center uppercase tracking-wider">
               Acceso Rápido de Prueba (Demo)
             </p>

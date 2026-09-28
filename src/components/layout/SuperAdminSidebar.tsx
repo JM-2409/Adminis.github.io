@@ -12,6 +12,7 @@ import {
   ChevronRight,
   ArrowLeftRight,
   Sparkles,
+  LogOut,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -50,7 +51,7 @@ export function SuperAdminSidebar() {
   return (
     <aside
       className={cn(
-        "relative flex flex-col border-r border-slate-800 bg-slate-950 text-slate-100 transition-all duration-300 min-h-screen z-20",
+        "hidden md:flex relative flex-col border-r border-slate-800 bg-slate-950 text-slate-100 transition-all duration-300 min-h-screen shrink-0 z-20",
         collapsed ? "w-20" : "w-64"
       )}
     >
@@ -144,8 +145,8 @@ export function SuperAdminSidebar() {
         </div>
       </nav>
 
-      {/* Owner User profile footer */}
-      <div className="border-t border-slate-800 p-3">
+      {/* Owner User profile footer & Logout */}
+      <div className="border-t border-slate-800 p-3 space-y-2">
         <div className="flex items-center gap-3 rounded-lg p-2 bg-slate-900/80 border border-slate-800">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-tr from-amber-500 to-indigo-500 text-white font-bold text-xs shadow">
             SA
@@ -161,6 +162,19 @@ export function SuperAdminSidebar() {
             </div>
           )}
         </div>
+
+        <form action="/api/auth/logout" method="POST">
+          <button
+            type="submit"
+            className={cn(
+              "w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-semibold text-red-400 hover:bg-red-500/10 border border-red-500/20 transition",
+              collapsed && "px-0"
+            )}
+          >
+            <LogOut className="w-4 h-4 shrink-0" />
+            {!collapsed && <span>Cerrar Sesión</span>}
+          </button>
+        </form>
       </div>
     </aside>
   );
