@@ -1,22 +1,36 @@
 import { getSession } from "@/lib/auth";
 import { supabaseAdmin } from "@/lib/supabase";
-import { UserCheck, Package, Truck, Calendar, AlertTriangle, ShieldCheck } from "lucide-react";
+import { UserCheck, Package, Truck, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 
 export const revalidate = 0;
+
+interface VisitorItem {
+  id: string;
+  name: string;
+  type: string;
+  entry_time: string;
+  status: string;
+}
+
+interface MovingItem {
+  status: string;
+  scheduled_date: string;
+  scheduled_time: string;
+}
 
 export default async function ResidenteDashboardPage() {
   const session = await getSession();
   const unitNumber = session?.unit_number || "Torre 1 - Apto 201";
   const complexId = session?.complex_id;
 
-  let visitors: Array<{ id: string; name: string; type: string; entry_time: string; status: string }> = [];
+  let visitors: VisitorItem[] = [];
   let pendingParcelsCount = 0;
   let movingAllowed = false;
   let movingStatusText = "Sin solicitudes de trasteo";
 
   if (complexId) {
-    const [{ data: visitorsData }, { count: parcelsCount }, { data: movingsData }] = await Promise.all([
+    const [resVisitors, resParcels, resMovings] = await Promise.all([
       supabaseAdmin
         .from("visitors")
         .select("*")
@@ -36,10 +50,11 @@ export default async function ResidenteDashboardPage() {
         .limit(1),
     ]);
 
-    visitors = visitorsData || [];
-    pendingParcelsCount = parcelsCount || 0;
+    visitors = ((resVisitors as { data?: VisitorItem[] })?.data) || [];
+    pendingParcelsCount = ((resParcels as { count?: number | null })?.count) || 0;
+    const movingsData = ((resMovings as { data?: MovingItem[] })?.data) || [];
 
-    if (movingsData && movingsData.length > 0) {
+    if (movingsData.length > 0) {
       const lastMoving = movingsData[0];
       if (lastMoving.status === "Aprobado") {
         movingAllowed = true;

@@ -34,8 +34,32 @@ export default function AdministradoresPage() {
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
-  const fetchData = async () => {
-    setLoading(true);
+  useEffect(() => {
+    let isMounted = true;
+    Promise.all([
+      fetch("/api/super-admin/admins"),
+      fetch("/api/super-admin/complexes"),
+    ])
+      .then(async ([resAdmins, resComplexes]) => {
+        const dataAdmins = await resAdmins.json();
+        const dataComplexes = await resComplexes.json();
+        if (isMounted) {
+          if (resAdmins.ok) setAdmins(dataAdmins.admins || []);
+          if (resComplexes.ok) setComplexes(dataComplexes.complexes || []);
+        }
+      })
+      .catch(() => {
+        if (isMounted) setMessage({ type: "error", text: "Error al cargar administradores" });
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const refreshData = async () => {
     try {
       const [resAdmins, resComplexes] = await Promise.all([
         fetch("/api/super-admin/admins"),
@@ -48,15 +72,9 @@ export default function AdministradoresPage() {
       if (resAdmins.ok) setAdmins(dataAdmins.admins || []);
       if (resComplexes.ok) setComplexes(dataComplexes.complexes || []);
     } catch {
-      setMessage({ type: "error", text: "Error al cargar administradores" });
-    } finally {
-      setLoading(false);
+      setMessage({ type: "error", text: "Error al actualizar administradores" });
     }
   };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,7 +94,7 @@ export default function AdministradoresPage() {
       setMessage({ type: "success", text: "Administrador creado y asignado con éxito" });
       setShowModal(false);
       setFormData({ username: "", password: "", full_name: "", email: "", phone: "", complex_id: "" });
-      fetchData();
+      refreshData();
     } catch (err: unknown) {
       setMessage({ type: "error", text: err instanceof Error ? err.message : "Error al procesar" });
     } finally {

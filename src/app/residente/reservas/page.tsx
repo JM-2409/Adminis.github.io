@@ -22,22 +22,31 @@ export default function ResidenteReservasPage() {
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
-  const fetchReservations = async () => {
-    setLoading(true);
+  useEffect(() => {
+    let isMounted = true;
+    fetch("/api/residente/reservations")
+      .then((res) => res.json())
+      .then((data) => {
+        if (isMounted) setReservations(data.reservations || []);
+      })
+      .catch(() => console.error("Error al obtener reservas"))
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const refreshReservations = async () => {
     try {
       const res = await fetch("/api/residente/reservations");
       const data = await res.json();
       if (res.ok) setReservations(data.reservations || []);
     } catch {
-      console.error("Error al obtener reservas");
-    } finally {
-      setLoading(false);
+      console.error("Error al actualizar reservas");
     }
   };
-
-  useEffect(() => {
-    fetchReservations();
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,7 +68,7 @@ export default function ResidenteReservasPage() {
 
       setMessage("¡Solicitud de reserva enviada a administración!");
       setShowModal(false);
-      fetchReservations();
+      refreshReservations();
     } catch (err: unknown) {
       setMessage(err instanceof Error ? err.message : "Error al solicitar");
     } finally {

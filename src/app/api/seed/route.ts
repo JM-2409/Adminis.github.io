@@ -15,7 +15,7 @@ export async function GET() {
       .eq("nip", "901234567-1")
       .single();
 
-    let complexId = existingComplex?.id;
+    let complexId: string | null = (existingComplex as Record<string, unknown> | null)?.id as string || null;
 
     if (!complexId) {
       const { data: newComplex, error: complexError } = await supabaseAdmin
@@ -31,8 +31,8 @@ export async function GET() {
         .select()
         .single();
 
-      if (complexError) throw complexError;
-      complexId = newComplex.id;
+      if (complexError || !newComplex) throw complexError || new Error("Error creando conjunto");
+      complexId = (newComplex as Record<string, unknown>).id as string;
     }
 
     // 2. Crear Usuarios Demo

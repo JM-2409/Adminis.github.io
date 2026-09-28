@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Truck, Plus, CheckCircle, AlertCircle } from "lucide-react";
+import { Truck, Plus, CheckCircle } from "lucide-react";
 
 interface MovingRequest {
   id: string;
@@ -33,22 +33,31 @@ export default function ResidenteTrasteosPage() {
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
-  const fetchRequests = async () => {
-    setLoading(true);
+  useEffect(() => {
+    let isMounted = true;
+    fetch("/api/residente/trasteos")
+      .then((res) => res.json())
+      .then((data) => {
+        if (isMounted) setRequests(data.requests || []);
+      })
+      .catch(() => console.error("Error al cargar trasteos"))
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const refreshRequests = async () => {
     try {
       const res = await fetch("/api/residente/trasteos");
       const data = await res.json();
       if (res.ok) setRequests(data.requests || []);
     } catch {
-      console.error("Error al cargar trasteos");
-    } finally {
-      setLoading(false);
+      console.error("Error al actualizar trasteos");
     }
   };
-
-  useEffect(() => {
-    fetchRequests();
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,7 +75,7 @@ export default function ResidenteTrasteosPage() {
 
       setMessage("¡Solicitud de trasteo enviada a la administración!");
       setShowModal(false);
-      fetchRequests();
+      refreshRequests();
     } catch (err: unknown) {
       setMessage(err instanceof Error ? err.message : "Error al solicitar");
     } finally {

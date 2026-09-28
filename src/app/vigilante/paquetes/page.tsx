@@ -30,22 +30,31 @@ export default function VigilantePaquetesPage() {
   const [deliveringParcel, setDeliveringParcel] = useState<Parcel | null>(null);
   const [deliveredTo, setDeliveredTo] = useState("");
 
-  const fetchParcels = async () => {
-    setLoading(true);
+  useEffect(() => {
+    let isMounted = true;
+    fetch("/api/vigilante/parcels")
+      .then((res) => res.json())
+      .then((data) => {
+        if (isMounted) setParcels(data.parcels || []);
+      })
+      .catch(() => console.error("Error al obtener paquetes"))
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const refreshParcels = async () => {
     try {
       const res = await fetch("/api/vigilante/parcels");
       const data = await res.json();
       if (res.ok) setParcels(data.parcels || []);
     } catch {
-      console.error("Error al obtener paquetes");
-    } finally {
-      setLoading(false);
+      console.error("Error al actualizar paquetes");
     }
   };
-
-  useEffect(() => {
-    fetchParcels();
-  }, []);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,7 +80,7 @@ export default function VigilantePaquetesPage() {
       setRecipientName("");
       setCourierCompany("");
       setDescription("");
-      fetchParcels();
+      refreshParcels();
     } catch (err: unknown) {
       setMessage(err instanceof Error ? err.message : "Error al registrar");
     } finally {
@@ -93,7 +102,7 @@ export default function VigilantePaquetesPage() {
       if (res.ok) {
         setDeliveringParcel(null);
         setDeliveredTo("");
-        fetchParcels();
+        refreshParcels();
       }
     } catch {
       console.error("Error al entregar paquete");

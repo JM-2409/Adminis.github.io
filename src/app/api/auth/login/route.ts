@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 import bcrypt from "bcryptjs";
-import { signToken } from "@/lib/auth";
+import { signToken, Role } from "@/lib/auth";
 
 export async function POST(request: Request) {
   try {
@@ -15,18 +15,20 @@ export async function POST(request: Request) {
     }
 
     // Buscar usuario en Supabase
-    const { data: user, error } = await supabaseAdmin
+    const { data: rawUser, error } = await supabaseAdmin
       .from("users")
       .select("*")
       .eq("username", username.trim())
       .single();
 
-    if (error || !user) {
+    if (error || !rawUser) {
       return NextResponse.json(
         { error: "Usuario o contraseña incorrectos" },
         { status: 401 }
       );
     }
+
+    const user = rawUser as Record<string, unknown>;
 
     if (user.status === "Inactivo" || user.status === "Suspendido") {
       return NextResponse.json(
@@ -35,7 +37,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const passwordMatch = await bcrypt.compare(password, user.password_hash);
+    const passwordMatch = await bcrypt.compare(password, user.password_hash as string);
     if (!passwordMatch) {
       return NextResponse.json(
         { error: "Usuario o contraseña incorrectos" },
@@ -44,12 +46,12 @@ export async function POST(request: Request) {
     }
 
     const token = await signToken({
-      id: user.id,
-      username: user.username,
-      full_name: user.full_name,
-      role: user.role,
-      complex_id: user.complex_id,
-      unit_number: user.unit_number,
+      id: user.id as string,
+      username: user.username as string,
+      full_name: user.full_name as string,
+      role: user.role as Role,
+      complex_id: (user.complex_id as string) || null,
+      unit_number: (user.unit_number as string) || null,
     });
 
     let redirectUrl = "/login";

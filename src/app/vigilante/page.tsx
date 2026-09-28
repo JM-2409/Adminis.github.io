@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { UserPlus, Car, User, CheckCircle, AlertCircle, LogOut } from "lucide-react";
+import { UserPlus, Car, User, CheckCircle } from "lucide-react";
 
 interface Visitor {
   id: string;
@@ -27,22 +27,31 @@ export default function VigilanteVisitantesPage() {
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
-  const fetchVisitors = async () => {
-    setLoading(true);
+  useEffect(() => {
+    let isMounted = true;
+    fetch("/api/vigilante/visitors")
+      .then((res) => res.json())
+      .then((data) => {
+        if (isMounted) setVisitors(data.visitors || []);
+      })
+      .catch(() => console.error("Error al obtener visitantes"))
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const refreshVisitors = async () => {
     try {
       const res = await fetch("/api/vigilante/visitors");
       const data = await res.json();
       if (res.ok) setVisitors(data.visitors || []);
     } catch {
-      console.error("Error al obtener visitantes");
-    } finally {
-      setLoading(false);
+      console.error("Error al actualizar visitantes");
     }
   };
-
-  useEffect(() => {
-    fetchVisitors();
-  }, []);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,7 +80,7 @@ export default function VigilanteVisitantesPage() {
       setApartmentUnit("");
       setLicensePlate("");
       setParkingSpot("");
-      fetchVisitors();
+      refreshVisitors();
     } catch (err: unknown) {
       setMessage(err instanceof Error ? err.message : "Error al registrar");
     } finally {
@@ -86,7 +95,7 @@ export default function VigilanteVisitantesPage() {
       });
 
       if (res.ok) {
-        fetchVisitors();
+        refreshVisitors();
       }
     } catch {
       console.error("Error al registrar salida");

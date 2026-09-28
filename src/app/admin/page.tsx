@@ -16,14 +16,7 @@ export default async function AdminDashboard() {
   let totalUnitsCount = 0;
 
   if (complexId) {
-    const [
-      { count: visitors },
-      { count: parcels },
-      { count: reservations },
-      { count: movings },
-      { count: infractions },
-      { count: units },
-    ] = await Promise.all([
+    const [resVisitors, resParcels, resReservations, resMovings, resInfractions, resUnits] = await Promise.all([
       supabaseAdmin.from("visitors").select("*", { count: "exact", head: true }).eq("complex_id", complexId).eq("status", "En sitio"),
       supabaseAdmin.from("parcels").select("*", { count: "exact", head: true }).eq("complex_id", complexId).eq("status", "Pendiente"),
       supabaseAdmin.from("reservations").select("*", { count: "exact", head: true }).eq("complex_id", complexId).eq("status", "Pendiente"),
@@ -32,12 +25,12 @@ export default async function AdminDashboard() {
       supabaseAdmin.from("units").select("*", { count: "exact", head: true }).eq("complex_id", complexId),
     ]);
 
-    visitorsCount = visitors || 0;
-    pendingParcelsCount = parcels || 0;
-    pendingReservationsCount = reservations || 0;
-    pendingMovingCount = movings || 0;
-    pendingInfractionsCount = infractions || 0;
-    totalUnitsCount = units || 0;
+    visitorsCount = (resVisitors as { count?: number | null })?.count || 0;
+    pendingParcelsCount = (resParcels as { count?: number | null })?.count || 0;
+    pendingReservationsCount = (resReservations as { count?: number | null })?.count || 0;
+    pendingMovingCount = (resMovings as { count?: number | null })?.count || 0;
+    pendingInfractionsCount = (resInfractions as { count?: number | null })?.count || 0;
+    totalUnitsCount = (resUnits as { count?: number | null })?.count || 0;
   }
 
   return (

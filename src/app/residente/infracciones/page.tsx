@@ -17,21 +17,20 @@ export default function ResidenteInfraccionesPage() {
   const [infractions, setInfractions] = useState<Infraction[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchInfractions = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/residente/infractions");
-      const data = await res.json();
-      if (res.ok) setInfractions(data.infractions || []);
-    } catch {
-      console.error("Error al obtener infracciones");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchInfractions();
+    let isMounted = true;
+    fetch("/api/residente/infractions")
+      .then((res) => res.json())
+      .then((data) => {
+        if (isMounted) setInfractions(data.infractions || []);
+      })
+      .catch(() => console.error("Error al obtener infracciones"))
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return (

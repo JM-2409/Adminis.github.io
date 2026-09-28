@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Bell, Send, CheckCircle } from "lucide-react";
+import { Send, CheckCircle } from "lucide-react";
 
 export default function NotificacionesPage() {
   const [title, setTitle] = useState("");

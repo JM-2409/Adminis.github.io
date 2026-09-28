@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { AlertTriangle, CheckCircle, XCircle } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 
 interface Infraction {
   id: string;
@@ -25,22 +25,31 @@ export default function AdminInfraccionesPage() {
   const [adminNotes, setAdminNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const fetchInfractions = async () => {
-    setLoading(true);
+  useEffect(() => {
+    let isMounted = true;
+    fetch("/api/admin/infractions")
+      .then((res) => res.json())
+      .then((data) => {
+        if (isMounted) setInfractions(data.infractions || []);
+      })
+      .catch(() => console.error("Error al obtener infracciones"))
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const refreshInfractions = async () => {
     try {
       const res = await fetch("/api/admin/infractions");
       const data = await res.json();
       if (res.ok) setInfractions(data.infractions || []);
     } catch {
-      console.error("Error al obtener infracciones");
-    } finally {
-      setLoading(false);
+      console.error("Error al actualizar infracciones");
     }
   };
-
-  useEffect(() => {
-    fetchInfractions();
-  }, []);
 
   const handleResolve = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,7 +70,7 @@ export default function AdminInfraccionesPage() {
       if (res.ok) {
         setSelected(null);
         setAdminNotes("");
-        fetchInfractions();
+        refreshInfractions();
       }
     } catch {
       console.error("Error al resolver infracción");

@@ -4,14 +4,30 @@ import Link from "next/link";
 
 export const revalidate = 0;
 
-export default async function SuperAdminDashboard() {
-  const { data: complexes } = await supabaseAdmin.from("complexes").select("*");
-  const { data: users } = await supabaseAdmin.from("users").select("*");
+interface ComplexItem {
+  id: string;
+  name: string;
+  nip: string;
+  address: string;
+  phone: string;
+  subscription_status: string;
+}
 
-  const totalComplexes = complexes?.length || 0;
-  const activeComplexes = complexes?.filter((c) => c.subscription_status === "Al día").length || 0;
-  const totalAdmins = users?.filter((u) => u.role === "administrador").length || 0;
-  const pendingComplexes = complexes?.filter((c) => c.subscription_status === "Pendiente" || c.subscription_status === "Suspendido").length || 0;
+interface UserItem {
+  role: string;
+}
+
+export default async function SuperAdminDashboard() {
+  const resComplexes = await supabaseAdmin.from("complexes").select("*");
+  const resUsers = await supabaseAdmin.from("users").select("*");
+
+  const complexes = (resComplexes as { data?: ComplexItem[] | null })?.data || [];
+  const users = (resUsers as { data?: UserItem[] | null })?.data || [];
+
+  const totalComplexes = complexes.length;
+  const activeComplexes = complexes.filter((c: ComplexItem) => c.subscription_status === "Al día").length;
+  const totalAdmins = users.filter((u: UserItem) => u.role === "administrador").length;
+  const pendingComplexes = complexes.filter((c: ComplexItem) => c.subscription_status === "Pendiente" || c.subscription_status === "Suspendido").length;
 
   return (
     <div className="space-y-6">
@@ -99,8 +115,8 @@ export default async function SuperAdminDashboard() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800">
-              {complexes && complexes.length > 0 ? (
-                complexes.map((c) => (
+              {complexes.length > 0 ? (
+                complexes.map((c: ComplexItem) => (
                   <tr key={c.id} className="hover:bg-slate-900/50">
                     <td className="px-4 py-3 font-semibold text-white">{c.name}</td>
                     <td className="px-4 py-3">{c.nip}</td>

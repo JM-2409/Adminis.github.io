@@ -9,10 +9,14 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "eyJhbGciOiJ
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 export const rawSupabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
-// Fallback JSON persistence for offline/unmigrated Supabase environments
+// Local JSON file persistence for fallback
 const DB_FILE = path.join(process.cwd(), "local_db.json");
 
-function readLocalDb(): Record<string, any[]> {
+interface LocalDbSchema {
+  [table: string]: Record<string, unknown>[];
+}
+
+function readLocalDb(): LocalDbSchema {
   try {
     if (fs.existsSync(DB_FILE)) {
       const content = fs.readFileSync(DB_FILE, "utf-8");
@@ -34,7 +38,7 @@ function readLocalDb(): Record<string, any[]> {
   };
 }
 
-function writeLocalDb(data: Record<string, any[]>) {
+function writeLocalDb(data: LocalDbSchema) {
   try {
     fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), "utf-8");
   } catch {
@@ -42,46 +46,18 @@ function writeLocalDb(data: Record<string, any[]>) {
   }
 }
 
-// Wrapper to seamlessly fallback if remote database tables don't exist yet
 export const supabaseAdmin = {
   from: (table: string) => {
     const realQuery = rawSupabaseAdmin.from(table);
 
     return {
       select: (columns: string = "*", options?: { count?: "exact" | "planned" | "estimated"; head?: boolean }) => {
-        let chain = {
-          eq: (col: string, val: any) => chainFilter((item: any) => item[col] === val),
-          order: (_col: string, _opts?: any) => chain,
-          limit: (n: number) => chainLimit(n),
-          single: async () => {
-            const res = await runQuery();
-            if (res.error) {
-              const localData = readLocalDb()[table] || [];
-              const found = localData[0] || null;
-              return { data: found, error: found ? null : { message: "Not found" } };
-            }
-            return { data: Array.isArray(res.data) ? res.data[0] || null : res.data, error: res.error };
-          },
-          then: (resolve: any, reject: any) => runQuery().then(resolve, reject),
-        };
-
-        const filters: Array<(item: any) => boolean> = [];
+        const filters: Array<(item: Record<string, unknown>) => boolean> = [];
         let limitCount: number | null = null;
 
-        function chainFilter(fn: (item: any) => boolean) {
-          filters.push(fn);
-          return chain;
-        }
-
-        function chainLimit(n: number) {
-          limitCount = n;
-          return chain;
-        }
-
-        async function runQuery() {
+        async function executeSelect(): Promise<{ data: unknown; count: number | null; error: unknown }> {
           const res = await realQuery.select(columns, options);
           if (res.error && res.error.code === "PGRST205") {
-            // Table doesn't exist on remote Supabase -> fallback to local DB store
             const db = readLocalDb();
             let items = db[table] || [];
 
@@ -99,69 +75,106 @@ export const supabaseAdmin = {
 
             return { data: items, count: items.length, error: null };
           }
-          return res;
+          return { data: res.data, count: res.count, error: res.error };
         }
+
+        const chain = {
+          eq: (col: string, val: unknown) => {
+            filters.push((item: Record<string, unknown>) => item[col] === val);
+            return chain;
+          },
+          order: (_col: string, _opts?: Record<string, unknown>) => chain,
+          limit: (n: number) => {
+            limitCount = n;
+            return chain;
+          },
+          single: async (): Promise<{ data: Record<string, unknown> | null; error: unknown }> => {
+            const res = await executeSelect();
+            if (res.error) {
+              const localData = readLocalDb()[table] || [];
+              const found = localData[0] || null;
+              return { data: found, error: found ? null : { message: "Not found" } };
+            }
+            return {
+              data: (Array.isArray(res.data) ? res.data[0] : res.data) as Record<string, unknown> | null,
+              error: res.error,
+            };
+          },
+          then: <TResult1 = unknown, TResult2 = never>(
+            onfulfilled?: ((value: { data: unknown; count: number | null; error: unknown }) => TResult1 | PromiseLike<TResult1>) | null,
+            onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null
+          ) => executeSelect().then(onfulfilled, onrejected),
+        };
 
         return chain;
       },
 
-      insert: (payload: any) => {
-        return {
+      insert: (payload: Record<string, unknown> | Record<string, unknown>[]) => {
+        const chain = {
           select: () => ({
-            single: async () => {
-              const res = await realQuery.insert(payload).select().single();
+            single: async (): Promise<{ data: Record<string, unknown> | null; error: unknown }> => {
+              const res = await realQuery.insert(payload as never).select().single();
               if (res.error && res.error.code === "PGRST205") {
                 const db = readLocalDb();
                 if (!db[table]) db[table] = [];
 
+                const payloadObj = Array.isArray(payload) ? payload[0] : payload;
                 const newItem = {
-                  id: payload.id || `id-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+                  id: payloadObj.id || `id-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
                   created_at: new Date().toISOString(),
-                  ...payload,
+                  ...payloadObj,
                 };
 
                 db[table].unshift(newItem);
                 writeLocalDb(db);
                 return { data: newItem, error: null };
               }
-              return res;
+              return { data: res.data as Record<string, unknown> | null, error: res.error };
             },
           }),
-          then: async (resolve: any, reject: any) => {
-            const res = await realQuery.insert(payload);
-            if (res.error && res.error.code === "PGRST205") {
-              const db = readLocalDb();
-              if (!db[table]) db[table] = [];
+          then: <TResult1 = unknown, TResult2 = never>(
+            onfulfilled?: ((value: { data: unknown; error: unknown }) => TResult1 | PromiseLike<TResult1>) | null,
+            onrejected?: ((reason: unknown) => TResult2 | PromiseLike<TResult2>) | null
+          ) => {
+            async function executeInsert() {
+              const res = await realQuery.insert(payload as never);
+              if (res.error && res.error.code === "PGRST205") {
+                const db = readLocalDb();
+                if (!db[table]) db[table] = [];
 
-              const itemsToInsert = Array.isArray(payload) ? payload : [payload];
-              for (const p of itemsToInsert) {
-                db[table].unshift({
-                  id: p.id || `id-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
-                  created_at: new Date().toISOString(),
-                  ...p,
-                });
+                const itemsToInsert = Array.isArray(payload) ? payload : [payload];
+                for (const p of itemsToInsert) {
+                  db[table].unshift({
+                    id: p.id || `id-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+                    created_at: new Date().toISOString(),
+                    ...p,
+                  });
+                }
+                writeLocalDb(db);
+                return { data: payload, error: null };
               }
-              writeLocalDb(db);
-              return resolve({ data: payload, error: null });
+              return { data: res.data, error: res.error };
             }
-            return resolve(res);
+            return executeInsert().then(onfulfilled, onrejected);
           },
         };
+
+        return chain;
       },
 
-      update: (payload: any) => {
+      update: (payload: Record<string, unknown>) => {
         let colFilter: string | null = null;
-        let valFilter: any = null;
+        let valFilter: unknown = null;
 
         const uChain = {
-          eq: (col: string, val: any) => {
+          eq: (col: string, val: unknown) => {
             colFilter = col;
             valFilter = val;
             return uChain;
           },
           select: () => ({
-            single: async () => {
-              const res = await realQuery.update(payload).eq(colFilter!, valFilter!).select().single();
+            single: async (): Promise<{ data: Record<string, unknown> | null; error: unknown }> => {
+              const res = await realQuery.update(payload as never).eq(colFilter!, valFilter as never).select().single();
               if (res.error && res.error.code === "PGRST205") {
                 const db = readLocalDb();
                 const items = db[table] || [];
@@ -172,7 +185,7 @@ export const supabaseAdmin = {
                   return { data: db[table][index], error: null };
                 }
               }
-              return res;
+              return { data: res.data as Record<string, unknown> | null, error: res.error };
             },
           }),
         };

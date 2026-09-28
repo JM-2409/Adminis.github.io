@@ -20,21 +20,20 @@ export default function ResidentePaquetesPage() {
   const [parcels, setParcels] = useState<Parcel[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchParcels = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/residente/parcels");
-      const data = await res.json();
-      if (res.ok) setParcels(data.parcels || []);
-    } catch {
-      console.error("Error al obtener paquetes");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchParcels();
+    let isMounted = true;
+    fetch("/api/residente/parcels")
+      .then((res) => res.json())
+      .then((data) => {
+        if (isMounted) setParcels(data.parcels || []);
+      })
+      .catch(() => console.error("Error al obtener paquetes"))
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   return (

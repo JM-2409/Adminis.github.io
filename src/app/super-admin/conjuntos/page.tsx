@@ -28,24 +28,33 @@ export default function ConjuntosPage() {
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
-  const fetchComplexes = async () => {
-    setLoading(true);
+  useEffect(() => {
+    let isMounted = true;
+    fetch("/api/super-admin/complexes")
+      .then((res) => res.json())
+      .then((data) => {
+        if (isMounted) setComplexes(data.complexes || []);
+      })
+      .catch(() => {
+        if (isMounted) setMessage({ type: "error", text: "Error al cargar los conjuntos" });
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const refreshComplexes = async () => {
     try {
       const res = await fetch("/api/super-admin/complexes");
       const data = await res.json();
-      if (res.ok) {
-        setComplexes(data.complexes || []);
-      }
+      if (res.ok) setComplexes(data.complexes || []);
     } catch {
-      setMessage({ type: "error", text: "Error al cargar los conjuntos" });
-    } finally {
-      setLoading(false);
+      setMessage({ type: "error", text: "Error al actualizar los conjuntos" });
     }
   };
-
-  useEffect(() => {
-    fetchComplexes();
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,7 +75,7 @@ export default function ConjuntosPage() {
       setMessage({ type: "success", text: "Conjunto residencial registrado con éxito" });
       setShowModal(false);
       setFormData({ name: "", nip: "", address: "", email: "", phone: "", subscription_status: "Al día" });
-      fetchComplexes();
+      refreshComplexes();
     } catch (err: unknown) {
       setMessage({ type: "error", text: err instanceof Error ? err.message : "Error al procesar" });
     } finally {
