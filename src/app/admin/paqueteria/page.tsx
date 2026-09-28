@@ -7,18 +7,14 @@ import {
   Plus,
   Search,
   Clock,
-  CheckCircle2,
-  Building,
-  Truck,
   X,
-  UserCheck,
 } from "lucide-react";
 
 interface Parcel {
   id: string;
   apartment: string;
   recipient: string;
-  courier: string; // e.g. Servientrega, MercadoLibre, Amazon
+  courier: string;
   description: string;
   receivedAt: string;
   deliveredAt?: string;
@@ -131,21 +127,21 @@ export default function PaqueteriaPage() {
   const deliveredCount = parcels.filter((p) => p.status === "Entregado").length;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-full overflow-x-hidden">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white">
             Control de Paquetería y Correspondencia
           </h1>
-          <p className="text-xs md:text-sm text-muted-foreground">
+          <p className="text-xs sm:text-sm text-slate-400">
             Registro de recepción e entrega de encomiendas en portería.
           </p>
         </div>
 
         <button
           onClick={() => setShowModal(true)}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 px-4 py-2.5 text-sm font-semibold hover:bg-slate-800 transition-colors shadow-sm"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 text-slate-950 px-4 py-2.5 text-xs sm:text-sm font-bold hover:bg-emerald-400 transition-colors shadow-md w-full sm:w-auto"
         >
           <Plus className="h-4 w-4" />
           Recepcionar Paquete
@@ -154,37 +150,37 @@ export default function PaqueteriaPage() {
 
       {/* Resumen */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="p-4 rounded-2xl border bg-card shadow-sm flex items-center gap-4">
-          <div className="p-3 rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-400">
+        <div className="p-4 rounded-2xl border border-slate-800 bg-[#111827] shadow-md flex items-center gap-4">
+          <div className="p-3 rounded-xl bg-amber-950/60 border border-amber-800/60 text-amber-400 shrink-0">
             <Package className="h-6 w-6" />
           </div>
           <div>
-            <span className="text-xs text-muted-foreground font-medium uppercase">Pendientes por Entregar</span>
-            <p className="text-2xl font-bold">{pendingCount} paquetes</p>
+            <span className="text-xs text-slate-400 font-bold uppercase">Pendientes por Entregar</span>
+            <p className="text-2xl font-extrabold text-white">{pendingCount} paquetes</p>
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl border bg-card shadow-sm flex items-center gap-4">
-          <div className="p-3 rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400">
+        <div className="p-4 rounded-2xl border border-slate-800 bg-[#111827] shadow-md flex items-center gap-4">
+          <div className="p-3 rounded-xl bg-emerald-950/60 border border-emerald-800/60 text-emerald-400 shrink-0">
             <PackageCheck className="h-6 w-6" />
           </div>
           <div>
-            <span className="text-xs text-muted-foreground font-medium uppercase">Entregados Recientemente</span>
-            <p className="text-2xl font-bold">{deliveredCount} paquetes</p>
+            <span className="text-xs text-slate-400 font-bold uppercase">Entregados Recientemente</span>
+            <p className="text-2xl font-extrabold text-white">{deliveredCount} paquetes</p>
           </div>
         </div>
       </div>
 
       {/* Filtros */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="relative w-full sm:w-80">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
           <input
             type="text"
             placeholder="Buscar por apto, residente o empresa..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-card py-2 pl-9 pr-4 text-sm text-slate-900 dark:text-slate-100 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-slate-900"
+            className="w-full rounded-xl border border-slate-700/80 bg-slate-900 py-2 pl-9 pr-4 text-xs sm:text-sm text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
           />
         </div>
 
@@ -193,10 +189,10 @@ export default function PaqueteriaPage() {
             <button
               key={status}
               onClick={() => setFilterStatus(status)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-colors border ${
                 filterStatus === status
-                  ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
-                  : "bg-card border text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
+                  ? "bg-slate-800 text-white border-emerald-500/50"
+                  : "bg-[#111827] text-slate-300 border-slate-800 hover:bg-slate-800"
               }`}
             >
               {status}
@@ -206,59 +202,59 @@ export default function PaqueteriaPage() {
       </div>
 
       {/* Tabla de Paquetes */}
-      <div className="rounded-2xl border bg-card shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 dark:bg-slate-900 border-b text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+      <div className="rounded-2xl border border-slate-800 bg-[#111827] shadow-md overflow-hidden max-w-full">
+        <div className="overflow-x-auto max-w-full">
+          <table className="w-full text-left text-xs sm:text-sm min-w-[600px]">
+            <thead className="bg-slate-900 border-b border-slate-800 text-[11px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">
               <tr>
-                <th className="p-4">Código / Destinatario</th>
-                <th className="p-4">Ubicación</th>
-                <th className="p-4">Empresa / Detalle</th>
-                <th className="p-4">Fecha Recepción</th>
-                <th className="p-4">Estado</th>
-                <th className="p-4 text-right">Acción</th>
+                <th className="p-3 sm:p-4">Código / Destinatario</th>
+                <th className="p-3 sm:p-4">Ubicación</th>
+                <th className="p-3 sm:p-4">Empresa / Detalle</th>
+                <th className="p-3 sm:p-4">Recepción</th>
+                <th className="p-3 sm:p-4">Estado</th>
+                <th className="p-3 sm:p-4 text-right">Acción</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+            <tbody className="divide-y divide-slate-800/80">
               {filteredParcels.map((p) => (
-                <tr key={p.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50">
-                  <td className="p-4 font-semibold text-slate-900 dark:text-slate-100">
-                    <div className="text-xs font-mono text-muted-foreground">{p.id}</div>
+                <tr key={p.id} className="hover:bg-slate-900/50">
+                  <td className="p-3 sm:p-4 font-bold text-white">
+                    <div className="text-[11px] font-mono text-slate-400">{p.id}</div>
                     <div>{p.recipient}</div>
                   </td>
-                  <td className="p-4 font-semibold text-slate-800 dark:text-slate-200">
+                  <td className="p-3 sm:p-4 font-bold text-slate-200 whitespace-nowrap">
                     {p.apartment}
                   </td>
-                  <td className="p-4 text-slate-700 dark:text-slate-300">
-                    <div className="font-medium text-xs text-blue-600 dark:text-blue-400">{p.courier}</div>
-                    <div className="text-xs text-muted-foreground">{p.description}</div>
+                  <td className="p-3 sm:p-4 text-slate-300">
+                    <div className="font-bold text-xs text-blue-400">{p.courier}</div>
+                    <div className="text-xs text-slate-400">{p.description}</div>
                   </td>
-                  <td className="p-4 text-xs text-muted-foreground">
+                  <td className="p-3 sm:p-4 text-xs text-slate-400 whitespace-nowrap">
                     <div className="flex items-center gap-1">
                       <Clock className="h-3 w-3" /> {p.receivedAt}
                     </div>
                   </td>
-                  <td className="p-4">
+                  <td className="p-3 sm:p-4 whitespace-nowrap">
                     <span
-                      className={`text-xs px-2.5 py-1 rounded-full font-semibold ${
+                      className={`text-xs px-2.5 py-1 rounded-full font-bold border ${
                         p.status === "Pendiente"
-                          ? "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300"
-                          : "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300"
+                          ? "bg-amber-950 text-amber-300 border-amber-800"
+                          : "bg-emerald-950 text-emerald-300 border-emerald-800"
                       }`}
                     >
                       {p.status}
                     </span>
                   </td>
-                  <td className="p-4 text-right">
+                  <td className="p-3 sm:p-4 text-right whitespace-nowrap">
                     {p.status === "Pendiente" ? (
                       <button
                         onClick={() => markDelivered(p.id)}
-                        className="inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-colors shadow-sm"
+                        className="inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-colors shadow-sm"
                       >
-                        <PackageCheck className="h-3.5 w-3.5" /> Entregar a Residente
+                        <PackageCheck className="h-3.5 w-3.5" /> Entregar
                       </button>
                     ) : (
-                      <span className="text-xs text-muted-foreground font-medium">
+                      <span className="text-xs text-slate-400 font-medium">
                         Entregado {p.deliveredAt}
                       </span>
                     )}
@@ -272,13 +268,13 @@ export default function PaqueteriaPage() {
 
       {/* Modal Recepcionar Paquete */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-card p-6 shadow-xl border">
-            <div className="flex items-center justify-between border-b pb-3 mb-4">
-              <h3 className="text-lg font-bold">Registrar Recepción de Paquete</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-3 sm:p-4">
+          <div className="w-full max-w-md rounded-2xl bg-[#111827] p-5 sm:p-6 shadow-2xl border border-slate-800">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+              <h3 className="text-base sm:text-lg font-extrabold text-white">Registrar Recepción de Paquete</h3>
               <button
                 onClick={() => setShowModal(false)}
-                className="rounded-lg p-1 hover:bg-slate-100 dark:hover:bg-slate-800"
+                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -286,7 +282,7 @@ export default function PaqueteriaPage() {
 
             <form onSubmit={handleRegister} className="space-y-4">
               <div>
-                <label className="text-xs font-semibold text-muted-foreground block mb-1">
+                <label className="text-xs font-bold text-slate-300 block mb-1">
                   Apartamento Destino
                 </label>
                 <input
@@ -295,12 +291,12 @@ export default function PaqueteriaPage() {
                   placeholder="Ej: Torre 1 - Apt 402"
                   value={formData.apartment}
                   onChange={(e) => setFormData({ ...formData, apartment: e.target.value })}
-                  className="w-full rounded-xl border bg-card p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  className="w-full rounded-xl border border-slate-700 bg-slate-900 p-2.5 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-muted-foreground block mb-1">
+                <label className="text-xs font-bold text-slate-300 block mb-1">
                   Nombre del Destinatario
                 </label>
                 <input
@@ -309,18 +305,18 @@ export default function PaqueteriaPage() {
                   placeholder="Ej: Sofía Gómez"
                   value={formData.recipient}
                   onChange={(e) => setFormData({ ...formData, recipient: e.target.value })}
-                  className="w-full rounded-xl border bg-card p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  className="w-full rounded-xl border border-slate-700 bg-slate-900 p-2.5 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-muted-foreground block mb-1">
+                <label className="text-xs font-bold text-slate-300 block mb-1">
                   Empresa Transportadora
                 </label>
                 <select
                   value={formData.courier}
                   onChange={(e) => setFormData({ ...formData, courier: e.target.value })}
-                  className="w-full rounded-xl border bg-card p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  className="w-full rounded-xl border border-slate-700 bg-slate-900 p-2.5 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 >
                   <option value="MercadoLibre">MercadoLibre</option>
                   <option value="Amazon">Amazon</option>
@@ -332,29 +328,29 @@ export default function PaqueteriaPage() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-muted-foreground block mb-1">
-                  Descripción o Observaciones
+                <label className="text-xs font-bold text-slate-300 block mb-1">
+                  Descripción u Observaciones
                 </label>
                 <input
                   type="text"
                   placeholder="Ej: Caja de cartón o sobre amarillo"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="w-full rounded-xl border bg-card p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  className="w-full rounded-xl border border-slate-700 bg-slate-900 p-2.5 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t">
+              <div className="flex justify-end gap-2 pt-3 border-t border-slate-800">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold border hover:bg-slate-100 dark:hover:bg-slate-800"
+                  className="px-4 py-2.5 rounded-xl text-xs font-bold border border-slate-700 bg-slate-800 text-slate-200 hover:bg-slate-700"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 hover:opacity-90"
+                  className="px-4 py-2.5 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 hover:bg-emerald-400"
                 >
                   Confirmar Recepción
                 </button>

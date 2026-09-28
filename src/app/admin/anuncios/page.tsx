@@ -2,16 +2,12 @@
 
 import { useState } from "react";
 import {
-  Megaphone,
   Plus,
   Clock,
   Trash2,
-  AlertTriangle,
-  CheckCircle2,
   Calendar,
   X,
   Database,
-  Sparkles,
 } from "lucide-react";
 
 interface Announcement {
@@ -107,18 +103,17 @@ export default function AnunciosPage() {
     setAnnouncements(announcements.filter((a) => !a.isExpired));
   };
 
-  const activeCount = announcements.filter((a) => !a.isExpired).length;
   const expiredCount = announcements.filter((a) => a.isExpired).length;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-full overflow-x-hidden">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white">
             Anuncios y Publicaciones con Expiración
           </h1>
-          <p className="text-xs md:text-sm text-muted-foreground">
+          <p className="text-xs sm:text-sm text-slate-400">
             Crea comunicados temporales para residentes. Se eliminan o archivan según la vigencia seleccionada para optimizar almacenamiento.
           </p>
         </div>
@@ -127,16 +122,16 @@ export default function AnunciosPage() {
           {expiredCount > 0 && (
             <button
               onClick={purgeExpired}
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 px-3.5 py-2.5 text-xs font-semibold transition-colors"
+              className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-800 border border-slate-700 hover:bg-slate-700 text-slate-200 px-3.5 py-2.5 text-xs font-bold transition-colors"
             >
-              <Trash2 className="h-4 w-4 text-rose-500" />
+              <Trash2 className="h-4 w-4 text-rose-400" />
               Depurar Expirados ({expiredCount})
             </button>
           )}
 
           <button
             onClick={() => setShowModal(true)}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 px-4 py-2.5 text-sm font-semibold hover:bg-slate-800 transition-colors shadow-sm"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 text-slate-950 px-4 py-2.5 text-xs sm:text-sm font-bold hover:bg-emerald-400 transition-colors shadow-md"
           >
             <Plus className="h-4 w-4" />
             Nueva Publicación
@@ -145,10 +140,10 @@ export default function AnunciosPage() {
       </div>
 
       {/* Banner de Optimización de Supabase */}
-      <div className="flex items-center gap-3 p-4 rounded-2xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800 text-blue-900 dark:text-blue-200 text-xs">
-        <Database className="h-5 w-5 text-blue-600 dark:text-blue-400 shrink-0" />
+      <div className="flex items-center gap-3 p-4 rounded-2xl bg-blue-950/50 border border-blue-800/80 text-blue-200 text-xs font-medium">
+        <Database className="h-5 w-5 text-blue-400 shrink-0" />
         <div>
-          <span className="font-bold">Optimizado para Supabase Free Tier:</span> Los avisos cuentan con fecha de caducidad automática para evitar saturar la base de datos de almacenamiento.
+          <span className="font-bold text-white">Optimizado para Supabase Free Tier:</span> Los avisos cuentan con fecha de caducidad automática para evitar saturar la base de datos de almacenamiento.
         </div>
       </div>
 
@@ -157,19 +152,19 @@ export default function AnunciosPage() {
         {announcements.map((a) => (
           <div
             key={a.id}
-            className={`rounded-2xl border bg-card p-5 shadow-sm flex flex-col justify-between space-y-4 relative ${
-              a.isExpired ? "opacity-60 bg-slate-50 dark:bg-slate-900/50" : ""
+            className={`rounded-2xl border border-slate-800 bg-[#111827] p-5 shadow-md flex flex-col justify-between space-y-4 relative ${
+              a.isExpired ? "opacity-60 bg-slate-900/60" : ""
             }`}
           >
             <div>
               <div className="flex items-center justify-between mb-2">
                 <span
-                  className={`text-xs px-2.5 py-0.5 rounded-full font-bold ${
+                  className={`text-xs px-2.5 py-0.5 rounded-full font-bold border ${
                     a.category === "Urgente"
-                      ? "bg-rose-100 text-rose-700 dark:bg-rose-950 dark:text-rose-300"
+                      ? "bg-rose-950 text-rose-300 border-rose-800"
                       : a.category === "Mantenimiento"
-                      ? "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300"
-                      : "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300"
+                      ? "bg-amber-950 text-amber-300 border-amber-800"
+                      : "bg-blue-950 text-blue-300 border-blue-800"
                   }`}
                 >
                   {a.category}
@@ -177,10 +172,10 @@ export default function AnunciosPage() {
 
                 <div className="flex items-center gap-2">
                   <span
-                    className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${
+                    className={`text-[11px] font-bold px-2 py-0.5 rounded-full border ${
                       a.isExpired
-                        ? "bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300"
-                        : "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300"
+                        ? "bg-slate-800 text-slate-300 border-slate-700"
+                        : "bg-emerald-950 text-emerald-300 border-emerald-800"
                     }`}
                   >
                     {a.isExpired ? "Expirado" : `Vigente ${a.durationDays} días`}
@@ -188,7 +183,7 @@ export default function AnunciosPage() {
 
                   <button
                     onClick={() => deleteAnnouncement(a.id)}
-                    className="p-1 rounded text-muted-foreground hover:text-rose-600 hover:bg-slate-100 dark:hover:bg-slate-800"
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-slate-800"
                     title="Eliminar publicación"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -196,16 +191,16 @@ export default function AnunciosPage() {
                 </div>
               </div>
 
-              <h3 className="font-bold text-base text-slate-900 dark:text-slate-100">
+              <h3 className="font-extrabold text-base text-white">
                 {a.title}
               </h3>
 
-              <p className="mt-2 text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              <p className="mt-2 text-xs sm:text-sm text-slate-300 leading-relaxed">
                 {a.content}
               </p>
             </div>
 
-            <div className="pt-3 border-t flex items-center justify-between text-xs text-muted-foreground font-medium">
+            <div className="pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400 font-medium">
               <span className="flex items-center gap-1">
                 <Calendar className="h-3.5 w-3.5" /> Publicado: {a.createdAt}
               </span>
@@ -219,13 +214,13 @@ export default function AnunciosPage() {
 
       {/* Modal Crear Anuncio */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-card p-6 shadow-xl border">
-            <div className="flex items-center justify-between border-b pb-3 mb-4">
-              <h3 className="text-lg font-bold">Nueva Publicación para Residentes</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-3 sm:p-4">
+          <div className="w-full max-w-md rounded-2xl bg-[#111827] p-5 sm:p-6 shadow-2xl border border-slate-800">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+              <h3 className="text-base sm:text-lg font-extrabold text-white">Nueva Publicación para Residentes</h3>
               <button
                 onClick={() => setShowModal(false)}
-                className="rounded-lg p-1 hover:bg-slate-100 dark:hover:bg-slate-800"
+                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -233,7 +228,7 @@ export default function AnunciosPage() {
 
             <form onSubmit={handleCreateAnnouncement} className="space-y-4">
               <div>
-                <label className="text-xs font-semibold text-muted-foreground block mb-1">
+                <label className="text-xs font-bold text-slate-300 block mb-1">
                   Categoría
                 </label>
                 <select
@@ -241,7 +236,7 @@ export default function AnunciosPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, category: e.target.value as any })
                   }
-                  className="w-full rounded-xl border bg-card p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  className="w-full rounded-xl border border-slate-700 bg-slate-900 p-2.5 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 >
                   <option value="General">General</option>
                   <option value="Mantenimiento">Mantenimiento</option>
@@ -251,7 +246,7 @@ export default function AnunciosPage() {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-muted-foreground block mb-1">
+                <label className="text-xs font-bold text-slate-300 block mb-1">
                   Título de la Publicación
                 </label>
                 <input
@@ -260,12 +255,12 @@ export default function AnunciosPage() {
                   placeholder="Ej: Mantenimiento de bombas de agua"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  className="w-full rounded-xl border bg-card p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  className="w-full rounded-xl border border-slate-700 bg-slate-900 p-2.5 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-muted-foreground block mb-1">
+                <label className="text-xs font-bold text-slate-300 block mb-1">
                   Contenido del Mensaje
                 </label>
                 <textarea
@@ -274,12 +269,12 @@ export default function AnunciosPage() {
                   placeholder="Escriba aquí los detalles del aviso..."
                   value={formData.content}
                   onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                  className="w-full rounded-xl border bg-card p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  className="w-full rounded-xl border border-slate-700 bg-slate-900 p-2.5 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 ></textarea>
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-muted-foreground block mb-1">
+                <label className="text-xs font-bold text-slate-300 block mb-1">
                   Duración / Expiración (Días de publicación)
                 </label>
                 <select
@@ -287,7 +282,7 @@ export default function AnunciosPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, durationDays: Number(e.target.value) })
                   }
-                  className="w-full rounded-xl border bg-card p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  className="w-full rounded-xl border border-slate-700 bg-slate-900 p-2.5 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 >
                   <option value={1}>1 Día (Aviso Express)</option>
                   <option value={3}>3 Días (Estándar)</option>
@@ -295,22 +290,22 @@ export default function AnunciosPage() {
                   <option value={15}>15 Días (Quincenal)</option>
                   <option value={30}>30 Días (Mensual)</option>
                 </select>
-                <span className="text-[11px] text-muted-foreground block mt-1">
+                <span className="text-[11px] text-slate-400 block mt-1">
                   Al finalizar el periodo, la publicación se desactiva para mantener liviana la base de datos.
                 </span>
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t">
+              <div className="flex justify-end gap-2 pt-3 border-t border-slate-800">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold border hover:bg-slate-100 dark:hover:bg-slate-800"
+                  className="px-4 py-2.5 rounded-xl text-xs font-bold border border-slate-700 bg-slate-800 text-slate-200 hover:bg-slate-700"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 hover:opacity-90"
+                  className="px-4 py-2.5 rounded-xl text-xs font-bold bg-emerald-500 text-slate-950 hover:bg-emerald-400"
                 >
                   Publicar Anuncio
                 </button>

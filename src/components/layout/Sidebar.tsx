@@ -85,19 +85,19 @@ export function Sidebar({
   const pathname = usePathname();
 
   const content = (
-    <div className="flex flex-col h-full bg-white text-slate-900 border-r border-slate-200">
+    <div className="flex flex-col h-full bg-[#0f172a] text-slate-100 border-r border-slate-800">
       {/* Header Logo */}
-      <div className="flex h-16 items-center justify-between px-4 border-b border-slate-200">
+      <div className="flex h-16 items-center justify-between px-4 border-b border-slate-800">
         <div className="flex items-center gap-3 overflow-hidden">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white font-bold shadow-sm">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold shadow-sm">
             <ShieldCheck className="h-6 w-6 text-emerald-400" />
           </div>
           {(!collapsed || mobileOpen) && (
             <div className="flex flex-col">
-              <span className="font-extrabold text-base leading-tight tracking-tight text-slate-900">
+              <span className="font-extrabold text-base leading-tight tracking-tight text-white">
                 Adminis
               </span>
-              <span className="text-xs text-slate-500 font-semibold">
+              <span className="text-xs text-slate-400 font-semibold">
                 Portal de Administración
               </span>
             </div>
@@ -107,7 +107,7 @@ export function Sidebar({
         {/* Desktop Collapse Button */}
         <button
           onClick={() => setCollapsed?.(!collapsed)}
-          className="hidden md:flex rounded-lg p-1.5 text-slate-600 hover:bg-slate-100 transition-colors"
+          className="hidden md:flex rounded-lg p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
           title={collapsed ? "Expandir menú" : "Colapsar menú"}
         >
           {collapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
@@ -116,7 +116,7 @@ export function Sidebar({
         {/* Mobile Close Button */}
         <button
           onClick={onMobileClose}
-          className="md:hidden rounded-lg p-1.5 text-slate-700 hover:bg-slate-100"
+          className="md:hidden rounded-lg p-1.5 text-slate-300 hover:bg-slate-800"
         >
           <X className="h-6 w-6" />
         </button>
@@ -136,16 +136,16 @@ export function Sidebar({
               href={item.href}
               onClick={onMobileClose}
               className={cn(
-                "flex items-center gap-3 rounded-xl px-3.5 py-3 md:py-2.5 text-sm font-semibold transition-all group relative",
+                "flex items-center gap-3 rounded-xl px-3.5 py-3 md:py-2.5 text-sm font-semibold transition-all group relative border",
                 isActive
-                  ? "bg-slate-900 text-white shadow-sm"
-                  : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+                  ? "bg-slate-800 text-white border-emerald-500/40 shadow-sm"
+                  : "bg-transparent text-slate-300 border-transparent hover:bg-slate-800/60 hover:text-white"
               )}
             >
               <Icon
                 className={cn(
                   "h-5 w-5 shrink-0 transition-colors",
-                  isActive ? "text-emerald-400" : "text-slate-500 group-hover:text-slate-900"
+                  isActive ? "text-emerald-400" : "text-slate-400 group-hover:text-emerald-400"
                 )}
               />
               {(!collapsed || mobileOpen) && <span className="truncate">{item.title}</span>}
@@ -155,8 +155,8 @@ export function Sidebar({
                   className={cn(
                     "ml-auto text-[11px] px-2 py-0.5 rounded-full font-bold",
                     isActive
-                      ? "bg-emerald-500/20 text-emerald-300"
-                      : "bg-blue-100 text-blue-700"
+                      ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                      : "bg-slate-800 text-blue-400 border border-slate-700"
                   )}
                 >
                   {item.badge}
@@ -168,17 +168,17 @@ export function Sidebar({
       </nav>
 
       {/* User profile footer */}
-      <div className="border-t border-slate-200 p-3">
-        <div className="flex items-center gap-3 rounded-xl p-2.5 bg-slate-100">
+      <div className="border-t border-slate-800 p-3">
+        <div className="flex items-center gap-3 rounded-xl p-2.5 bg-slate-800/80 border border-slate-700/50">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white font-bold text-xs shadow-sm">
             AD
           </div>
           {(!collapsed || mobileOpen) && (
             <div className="flex flex-col min-w-0 flex-1">
-              <span className="text-xs font-bold truncate text-slate-900">
+              <span className="text-xs font-bold truncate text-white">
                 Administración
               </span>
-              <span className="text-[11px] text-emerald-700 font-semibold truncate">
+              <span className="text-[11px] text-emerald-400 font-medium truncate">
                 Conjunto Bosques del Sol
               </span>
             </div>
@@ -204,10 +204,10 @@ export function Sidebar({
       {mobileOpen && (
         <div className="fixed inset-0 z-50 flex md:hidden">
           <div
-            className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm transition-opacity"
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
             onClick={onMobileClose}
           />
-          <div className="relative flex w-4/5 max-w-xs flex-1 flex-col bg-white z-10 shadow-2xl">
+          <div className="relative flex w-4/5 max-w-xs flex-1 flex-col bg-[#0f172a] z-10 shadow-2xl">
             {content}
           </div>
         </div>

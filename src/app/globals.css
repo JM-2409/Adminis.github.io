@@ -1,28 +1,53 @@
 @import "tailwindcss";
 
 :root {
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 html, body {
-  background-color: #f8fafc !important;
-  color: #0f172a !important;
-  color-scheme: light !important;
+  background-color: #090d16 !important;
+  color: #f8fafc !important;
+  color-scheme: dark !important;
+  font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
 }
 
-/* Forzar colores claros estables en todas las tarjetas y componentes */
+/* Tarjetas y superficies */
 .bg-card {
-  background-color: #ffffff !important;
+  background-color: #111827 !important;
 }
 
+.bg-card-hover {
+  background-color: #1f2937 !important;
+}
+
+/* Texto de alto contraste */
 .text-card-foreground {
-  color: #0f172a !important;
+  color: #f8fafc !important;
 }
 
 .text-muted-foreground {
-  color: #475569 !important;
+  color: #9ca3af !important;
 }
 
 .border-card {
-  border-color: #e2e8f0 !important;
+  border-color: #1f2937 !important;
+}
+
+/* Scrollbars profesionales */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #090d16;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4b5563;
 }
