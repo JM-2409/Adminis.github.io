@@ -27,30 +27,30 @@ export function Header({ onMenuClick }: HeaderProps) {
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b bg-card px-4 md:px-6 shadow-sm">
-      <div className="flex items-center gap-3 w-full max-w-xl">
-        {/* Mobile Hamburger Menu Button */}
+    <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b bg-white/95 dark:bg-slate-900/95 backdrop-blur-md px-3 sm:px-4 md:px-6 shadow-sm max-w-full overflow-hidden">
+      <div className="flex items-center gap-2 sm:gap-3 w-full max-w-xl min-w-0">
+        {/* Mobile Hamburger Button fixed and reachable anytime */}
         <button
           onClick={onMenuClick}
-          className="md:hidden rounded-lg p-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
-          aria-label="Abrir menú"
+          className="md:hidden shrink-0 rounded-xl p-2.5 bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100 hover:bg-slate-200 dark:hover:bg-slate-700 active:scale-95 transition-all"
+          aria-label="Abrir menú de navegación"
         >
-          <Menu className="h-6 w-6" />
+          <Menu className="h-5 w-5" />
         </button>
 
         {/* Search Bar */}
-        <div className="relative w-full">
+        <div className="relative w-full min-w-0">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
             placeholder="Buscar apto, visitante, paquete..."
-            className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 py-2 pl-9 pr-4 text-xs md:text-sm text-slate-900 dark:text-slate-100 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-400"
+            className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 py-2 pl-9 pr-3 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-slate-900 dark:focus:ring-slate-400 truncate"
           />
         </div>
       </div>
 
       {/* Action Icons */}
-      <div className="flex items-center gap-2 md:gap-3 shrink-0 ml-2">
+      <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 ml-2">
         {/* Dark mode toggle */}
         <button
           onClick={toggleDarkMode}

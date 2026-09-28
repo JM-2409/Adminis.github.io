@@ -6,12 +6,8 @@ import {
   UserCheck,
   Plus,
   Search,
-  Filter,
   Clock,
   LogOut,
-  Building,
-  CheckCircle2,
-  AlertCircle,
   ParkingSquare,
   X,
 } from "lucide-react";
@@ -76,7 +72,6 @@ export default function VisitantesPage() {
   const [filterType, setFilterType] = useState<"Todos" | "En sitio" | "Vehicular" | "Peatonal">("Todos");
   const [showModal, setShowModal] = useState(false);
 
-  // Form State
   const [formData, setFormData] = useState({
     type: "Vehicular" as "Vehicular" | "Peatonal",
     name: "",
@@ -137,21 +132,21 @@ export default function VisitantesPage() {
   const totalParkingSlots = 20;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-full overflow-x-hidden">
       {/* Encabezado del Módulo */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight break-words">
             Control de Visitantes y Parqueaderos
           </h1>
-          <p className="text-xs md:text-sm text-muted-foreground">
-            Registro de ingresos/salidas peatonales y vehiculares del conjunto.
+          <p className="text-xs sm:text-sm text-muted-foreground">
+            Registro de ingresos/salidas peatonales y vehiculares.
           </p>
         </div>
 
         <button
           onClick={() => setShowModal(true)}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 px-4 py-2.5 text-sm font-semibold hover:bg-slate-800 transition-colors shadow-sm"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 px-4 py-3 sm:py-2.5 text-xs sm:text-sm font-semibold hover:bg-slate-800 transition-colors shadow-sm w-full sm:w-auto"
         >
           <Plus className="h-4 w-4" />
           Registrar Ingreso
@@ -159,40 +154,40 @@ export default function VisitantesPage() {
       </div>
 
       {/* Resumen de Capacidad */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="p-4 rounded-2xl border bg-card shadow-sm flex items-center gap-4">
-          <div className="p-3 rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400">
+          <div className="p-3 rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-950 dark:text-blue-400 shrink-0">
             <Car className="h-6 w-6" />
           </div>
-          <div>
-            <span className="text-xs text-muted-foreground font-medium uppercase">Vehículos Activos</span>
+          <div className="min-w-0">
+            <span className="text-xs text-muted-foreground font-medium uppercase truncate block">Vehículos Activos</span>
             <p className="text-2xl font-bold">{activeVehicles} / {totalParkingSlots}</p>
           </div>
         </div>
 
         <div className="p-4 rounded-2xl border bg-card shadow-sm flex items-center gap-4">
-          <div className="p-3 rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400">
+          <div className="p-3 rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-950 dark:text-emerald-400 shrink-0">
             <UserCheck className="h-6 w-6" />
           </div>
-          <div>
-            <span className="text-xs text-muted-foreground font-medium uppercase">Peatones Activos</span>
+          <div className="min-w-0">
+            <span className="text-xs text-muted-foreground font-medium uppercase truncate block">Peatones Activos</span>
             <p className="text-2xl font-bold">{activePedestrians}</p>
           </div>
         </div>
 
         <div className="p-4 rounded-2xl border bg-card shadow-sm flex items-center gap-4">
-          <div className="p-3 rounded-xl bg-purple-50 text-purple-600 dark:bg-purple-950 dark:text-purple-400">
+          <div className="p-3 rounded-xl bg-purple-50 text-purple-600 dark:bg-purple-950 dark:text-purple-400 shrink-0">
             <ParkingSquare className="h-6 w-6" />
           </div>
-          <div>
-            <span className="text-xs text-muted-foreground font-medium uppercase">Celdas Visitante Libres</span>
+          <div className="min-w-0">
+            <span className="text-xs text-muted-foreground font-medium uppercase truncate block">Celdas Libres</span>
             <p className="text-2xl font-bold">{totalParkingSlots - activeVehicles}</p>
           </div>
         </div>
       </div>
 
       {/* Filtros y Búsqueda */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="relative w-full sm:w-80">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input
@@ -200,11 +195,11 @@ export default function VisitantesPage() {
             placeholder="Buscar por nombre, placa o apto..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-card py-2 pl-9 pr-4 text-sm text-slate-900 dark:text-slate-100 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-slate-900"
+            className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-card py-2 pl-9 pr-4 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-slate-900"
           />
         </div>
 
-        <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto">
+        <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
           {(["Todos", "En sitio", "Vehicular", "Peatonal"] as const).map((type) => (
             <button
               key={type}
@@ -221,31 +216,30 @@ export default function VisitantesPage() {
         </div>
       </div>
 
-      {/* Tabla de Visitantes */}
-      <div className="rounded-2xl border bg-card shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 dark:bg-slate-900 border-b text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+      {/* Tabla Adaptada a Móvil */}
+      <div className="rounded-2xl border bg-card shadow-sm overflow-hidden max-w-full">
+        <div className="overflow-x-auto max-w-full">
+          <table className="w-full text-left text-xs sm:text-sm min-w-[600px]">
+            <thead className="bg-slate-50 dark:bg-slate-900 border-b text-[11px] sm:text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               <tr>
-                <th className="p-4">Visitante</th>
-                <th className="p-4">Tipo</th>
-                <th className="p-4">Destino</th>
-                <th className="p-4">Placa / Parqueadero</th>
-                <th className="p-4">Hora de Ingreso</th>
-                <th className="p-4">Estado</th>
-                <th className="p-4 text-right">Acción</th>
+                <th className="p-3 sm:p-4">Visitante</th>
+                <th className="p-3 sm:p-4">Tipo</th>
+                <th className="p-3 sm:p-4">Destino</th>
+                <th className="p-3 sm:p-4">Placa / Parqueadero</th>
+                <th className="p-3 sm:p-4">Hora</th>
+                <th className="p-3 sm:p-4 text-right">Acción</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {filteredVisitors.map((v) => (
                 <tr key={v.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-900/50">
-                  <td className="p-4 font-semibold text-slate-900 dark:text-slate-100">
-                    <div>{v.name}</div>
-                    <div className="text-xs font-normal text-muted-foreground">C.C. {v.document}</div>
+                  <td className="p-3 sm:p-4 font-semibold text-slate-900 dark:text-slate-100 max-w-[150px] truncate">
+                    <div className="truncate">{v.name}</div>
+                    <div className="text-[11px] font-normal text-muted-foreground">C.C. {v.document}</div>
                   </td>
-                  <td className="p-4">
+                  <td className="p-3 sm:p-4">
                     <span
-                      className={`inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium ${
+                      className={`inline-flex items-center gap-1 text-[11px] sm:text-xs px-2 py-0.5 rounded-full font-medium ${
                         v.type === "Vehicular"
                           ? "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300"
                           : "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300"
@@ -255,44 +249,33 @@ export default function VisitantesPage() {
                       {v.type}
                     </span>
                   </td>
-                  <td className="p-4 text-slate-700 dark:text-slate-300 font-medium">
+                  <td className="p-3 sm:p-4 text-slate-700 dark:text-slate-300 font-medium whitespace-nowrap">
                     {v.apartment}
                   </td>
-                  <td className="p-4 text-slate-700 dark:text-slate-300">
+                  <td className="p-3 sm:p-4 text-slate-700 dark:text-slate-300 whitespace-nowrap">
                     {v.type === "Vehicular" ? (
-                      <span className="font-mono bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded font-bold text-xs">
+                      <span className="font-mono bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded font-bold text-[11px] sm:text-xs">
                         {v.licensePlate} ({v.parkingSpot})
                       </span>
                     ) : (
                       <span className="text-muted-foreground text-xs">N/A</span>
                     )}
                   </td>
-                  <td className="p-4 text-xs text-muted-foreground">
+                  <td className="p-3 sm:p-4 text-[11px] sm:text-xs text-muted-foreground whitespace-nowrap">
                     <div className="flex items-center gap-1">
                       <Clock className="h-3 w-3" /> {v.entryTime}
                     </div>
                   </td>
-                  <td className="p-4">
-                    <span
-                      className={`text-xs px-2.5 py-1 rounded-full font-semibold ${
-                        v.status === "En sitio"
-                          ? "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300"
-                          : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400"
-                      }`}
-                    >
-                      {v.status}
-                    </span>
-                  </td>
-                  <td className="p-4 text-right">
+                  <td className="p-3 sm:p-4 text-right whitespace-nowrap">
                     {v.status === "En sitio" ? (
                       <button
                         onClick={() => markExit(v.id)}
-                        className="inline-flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 font-semibold text-slate-800 dark:text-slate-200 transition-colors"
+                        className="inline-flex items-center gap-1 text-[11px] sm:text-xs px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 font-semibold text-slate-800 dark:text-slate-200 transition-colors"
                       >
-                        <LogOut className="h-3.5 w-3.5" /> Registrar Salida
+                        <LogOut className="h-3 w-3" /> Salida
                       </button>
                     ) : (
-                      <span className="text-xs text-muted-foreground">Finalizado</span>
+                      <span className="text-[11px] text-muted-foreground">Finalizado</span>
                     )}
                   </td>
                 </tr>
@@ -304,19 +287,19 @@ export default function VisitantesPage() {
 
       {/* Modal para Registrar Nuevo Ingreso */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-card p-6 shadow-xl border">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4 overflow-y-auto">
+          <div className="w-full max-w-md rounded-2xl bg-card p-5 sm:p-6 shadow-xl border my-auto">
             <div className="flex items-center justify-between border-b pb-3 mb-4">
-              <h3 className="text-lg font-bold">Registrar Ingreso de Visitante</h3>
+              <h3 className="text-base sm:text-lg font-bold">Registrar Ingreso de Visitante</h3>
               <button
                 onClick={() => setShowModal(false)}
-                className="rounded-lg p-1 hover:bg-slate-100 dark:hover:bg-slate-800"
+                className="rounded-lg p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            <form onSubmit={handleRegister} className="space-y-4">
+            <form onSubmit={handleRegister} className="space-y-3 sm:space-y-4">
               <div>
                 <label className="text-xs font-semibold text-muted-foreground block mb-1">
                   Tipo de Acceso
@@ -357,7 +340,7 @@ export default function VisitantesPage() {
                   placeholder="Ej: Laura Castro"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full rounded-xl border bg-card p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  className="w-full rounded-xl border bg-card p-2.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
                 />
               </div>
 
@@ -370,7 +353,7 @@ export default function VisitantesPage() {
                   placeholder="C.C. o C.E."
                   value={formData.document}
                   onChange={(e) => setFormData({ ...formData, document: e.target.value })}
-                  className="w-full rounded-xl border bg-card p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  className="w-full rounded-xl border bg-card p-2.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
                 />
               </div>
 
@@ -384,12 +367,12 @@ export default function VisitantesPage() {
                   placeholder="Ej: Torre 2 - Apt 401"
                   value={formData.apartment}
                   onChange={(e) => setFormData({ ...formData, apartment: e.target.value })}
-                  className="w-full rounded-xl border bg-card p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
+                  className="w-full rounded-xl border bg-card p-2.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
                 />
               </div>
 
               {formData.type === "Vehicular" && (
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-2 sm:gap-3">
                   <div>
                     <label className="text-xs font-semibold text-muted-foreground block mb-1">
                       Placa Vehículo
@@ -399,7 +382,7 @@ export default function VisitantesPage() {
                       placeholder="ABC-123"
                       value={formData.licensePlate}
                       onChange={(e) => setFormData({ ...formData, licensePlate: e.target.value })}
-                      className="w-full rounded-xl border bg-card p-2.5 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-slate-900"
+                      className="w-full rounded-xl border bg-card p-2.5 text-xs sm:text-sm uppercase focus:outline-none focus:ring-2 focus:ring-slate-900"
                     />
                   </div>
                   <div>
@@ -411,7 +394,7 @@ export default function VisitantesPage() {
                       placeholder="Ej: V-05"
                       value={formData.parkingSpot}
                       onChange={(e) => setFormData({ ...formData, parkingSpot: e.target.value })}
-                      className="w-full rounded-xl border bg-card p-2.5 text-sm uppercase focus:outline-none focus:ring-2 focus:ring-slate-900"
+                      className="w-full rounded-xl border bg-card p-2.5 text-xs sm:text-sm uppercase focus:outline-none focus:ring-2 focus:ring-slate-900"
                     />
                   </div>
                 </div>
@@ -421,13 +404,13 @@ export default function VisitantesPage() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold border hover:bg-slate-100 dark:hover:bg-slate-800"
+                  className="px-4 py-2.5 rounded-xl text-xs font-semibold border hover:bg-slate-100 dark:hover:bg-slate-800"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 hover:opacity-90"
+                  className="px-4 py-2.5 rounded-xl text-xs font-semibold bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 hover:opacity-90"
                 >
                   Guardar Registro
                 </button>
