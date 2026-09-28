@@ -1,56 +1,28 @@
 @import "tailwindcss";
 
-@layer base {
-  :root {
-    --background: #f8fafc;
-    --foreground: #0f172a;
-    --card: #ffffff;
-    --card-foreground: #0f172a;
-    --muted: #f1f5f9;
-    --muted-foreground: #475569;
-    --primary: #0f172a;
-    --primary-foreground: #ffffff;
-    --border: #e2e8f0;
-  }
-
-  .dark {
-    --background: #020617;
-    --foreground: #f8fafc;
-    --card: #0f172a;
-    --card-foreground: #f8fafc;
-    --muted: #1e293b;
-    --muted-foreground: #94a3b8;
-    --primary: #f8fafc;
-    --primary-foreground: #0f172a;
-    --border: #1e293b;
-  }
+:root {
+  color-scheme: light;
 }
 
-/* Explicit class mappings for guaranteed contrast */
+html, body {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+  color-scheme: light !important;
+}
+
+/* Forzar colores claros estables en todas las tarjetas y componentes */
 .bg-card {
-  background-color: #ffffff;
-}
-.dark .bg-card {
-  background-color: #0f172a;
+  background-color: #ffffff !important;
 }
 
 .text-card-foreground {
-  color: #0f172a;
-}
-.dark .text-card-foreground {
-  color: #f8fafc;
+  color: #0f172a !important;
 }
 
 .text-muted-foreground {
-  color: #475569;
-}
-.dark .text-muted-foreground {
-  color: #94a3b8;
+  color: #475569 !important;
 }
 
 .border-card {
-  border-color: #e2e8f0;
-}
-.dark .border-card {
-  border-color: #1e293b;
+  border-color: #e2e8f0 !important;
 }

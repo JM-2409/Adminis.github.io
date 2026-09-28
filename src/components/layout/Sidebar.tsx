@@ -85,19 +85,19 @@ export function Sidebar({
   const pathname = usePathname();
 
   const content = (
-    <div className="flex flex-col h-full bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 border-r border-slate-200 dark:border-slate-800">
+    <div className="flex flex-col h-full bg-white text-slate-900 border-r border-slate-200">
       {/* Header Logo */}
-      <div className="flex h-16 items-center justify-between px-4 border-b border-slate-200 dark:border-slate-800">
+      <div className="flex h-16 items-center justify-between px-4 border-b border-slate-200">
         <div className="flex items-center gap-3 overflow-hidden">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 font-bold shadow-md">
-            <ShieldCheck className="h-6 w-6 text-emerald-400 dark:text-emerald-600" />
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-slate-900 text-white font-bold shadow-sm">
+            <ShieldCheck className="h-6 w-6 text-emerald-400" />
           </div>
           {(!collapsed || mobileOpen) && (
             <div className="flex flex-col">
-              <span className="font-extrabold text-base leading-tight tracking-tight text-slate-900 dark:text-slate-100">
+              <span className="font-extrabold text-base leading-tight tracking-tight text-slate-900">
                 Adminis
               </span>
-              <span className="text-xs text-slate-500 dark:text-slate-400 font-semibold">
+              <span className="text-xs text-slate-500 font-semibold">
                 Portal de Administración
               </span>
             </div>
@@ -107,7 +107,7 @@ export function Sidebar({
         {/* Desktop Collapse Button */}
         <button
           onClick={() => setCollapsed?.(!collapsed)}
-          className="hidden md:flex rounded-lg p-1.5 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          className="hidden md:flex rounded-lg p-1.5 text-slate-600 hover:bg-slate-100 transition-colors"
           title={collapsed ? "Expandir menú" : "Colapsar menú"}
         >
           {collapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
@@ -116,7 +116,7 @@ export function Sidebar({
         {/* Mobile Close Button */}
         <button
           onClick={onMobileClose}
-          className="md:hidden rounded-lg p-1.5 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+          className="md:hidden rounded-lg p-1.5 text-slate-700 hover:bg-slate-100"
         >
           <X className="h-6 w-6" />
         </button>
@@ -138,16 +138,14 @@ export function Sidebar({
               className={cn(
                 "flex items-center gap-3 rounded-xl px-3.5 py-3 md:py-2.5 text-sm font-semibold transition-all group relative",
                 isActive
-                  ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 shadow-sm"
-                  : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"
+                  ? "bg-slate-900 text-white shadow-sm"
+                  : "text-slate-700 hover:bg-slate-100 hover:text-slate-900"
               )}
             >
               <Icon
                 className={cn(
                   "h-5 w-5 shrink-0 transition-colors",
-                  isActive
-                    ? "text-emerald-400 dark:text-emerald-600"
-                    : "text-slate-500 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-white"
+                  isActive ? "text-emerald-400" : "text-slate-500 group-hover:text-slate-900"
                 )}
               />
               {(!collapsed || mobileOpen) && <span className="truncate">{item.title}</span>}
@@ -157,8 +155,8 @@ export function Sidebar({
                   className={cn(
                     "ml-auto text-[11px] px-2 py-0.5 rounded-full font-bold",
                     isActive
-                      ? "bg-emerald-500/20 text-emerald-300 dark:bg-emerald-950 dark:text-emerald-800"
-                      : "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300"
+                      ? "bg-emerald-500/20 text-emerald-300"
+                      : "bg-blue-100 text-blue-700"
                   )}
                 >
                   {item.badge}
@@ -170,17 +168,17 @@ export function Sidebar({
       </nav>
 
       {/* User profile footer */}
-      <div className="border-t border-slate-200 dark:border-slate-800 p-3">
-        <div className="flex items-center gap-3 rounded-xl p-2.5 bg-slate-100 dark:bg-slate-800/80">
+      <div className="border-t border-slate-200 p-3">
+        <div className="flex items-center gap-3 rounded-xl p-2.5 bg-slate-100">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white font-bold text-xs shadow-sm">
             AD
           </div>
           {(!collapsed || mobileOpen) && (
             <div className="flex flex-col min-w-0 flex-1">
-              <span className="text-xs font-bold truncate text-slate-900 dark:text-slate-100">
+              <span className="text-xs font-bold truncate text-slate-900">
                 Administración
               </span>
-              <span className="text-[11px] text-emerald-700 dark:text-emerald-400 font-semibold truncate">
+              <span className="text-[11px] text-emerald-700 font-semibold truncate">
                 Conjunto Bosques del Sol
               </span>
             </div>
@@ -206,10 +204,10 @@ export function Sidebar({
       {mobileOpen && (
         <div className="fixed inset-0 z-50 flex md:hidden">
           <div
-            className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm transition-opacity"
+            className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm transition-opacity"
             onClick={onMobileClose}
           />
-          <div className="relative flex w-4/5 max-w-xs flex-1 flex-col bg-white dark:bg-slate-900 z-10 shadow-2xl">
+          <div className="relative flex w-4/5 max-w-xs flex-1 flex-col bg-white z-10 shadow-2xl">
             {content}
           </div>
         </div>
