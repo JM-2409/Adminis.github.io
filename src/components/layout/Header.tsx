@@ -1,16 +1,10 @@
 "use client";
 
-import { Bell, Search, Sun, Moon, ShieldCheck, UserCheck } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Bell, Search, Sun, Moon, UserCheck } from "lucide-react";
+import { useState } from "react";
 
 export function Header() {
   const [isDarkMode, setIsDarkMode] = useState(false);
-
-  useEffect(() => {
-    if (document.documentElement.classList.contains("dark")) {
-      setIsDarkMode(true);
-    }
-  }, []);
 
   const toggleDarkMode = () => {
     if (isDarkMode) {

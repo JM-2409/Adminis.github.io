@@ -1,19 +1,11 @@
 "use client";
 
 import { Bell, Search, Sun, Moon, ShieldAlert, ArrowLeftRight } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 
 export function SuperAdminHeader() {
   const [isDarkMode, setIsDarkMode] = useState(true);
-
-  useEffect(() => {
-    // Default to dark mode for super admin theme
-    if (!document.documentElement.classList.contains("dark")) {
-      document.documentElement.classList.add("dark");
-    }
-    setIsDarkMode(document.documentElement.classList.contains("dark"));
-  }, []);
 
   const toggleDarkMode = () => {
     if (isDarkMode) {

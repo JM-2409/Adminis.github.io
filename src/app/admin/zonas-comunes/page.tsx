@@ -2,20 +2,18 @@
 
 import { useState } from "react";
 import {
-  CalendarDays,
-  Flame,
   PartyPopper,
+  Flame,
   Plus,
-  Clock,
   Check,
   X,
-  DollarSign,
-  UserCheck,
 } from "lucide-react";
+
+type FacilityType = "Salón Social" | "Terraza BBQ 1" | "Terraza BBQ 2";
 
 interface Reservation {
   id: string;
-  facility: "Salón Social" | "Terraza BBQ 1" | "Terraza BBQ 2";
+  facility: FacilityType;
   resident: string;
   apartment: string;
   date: string;
@@ -60,7 +58,7 @@ export default function ZonasComunesPage() {
 
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
-    facility: "Salón Social" as "Salón Social" | "Terraza BBQ 1" | "Terraza BBQ 2",
+    facility: "Salón Social" as FacilityType,
     resident: "",
     apartment: "",
     date: "",
@@ -271,7 +269,7 @@ export default function ZonasComunesPage() {
                 <select
                   value={formData.facility}
                   onChange={(e) =>
-                    setFormData({ ...formData, facility: e.target.value as any })
+                    setFormData({ ...formData, facility: e.target.value as FacilityType })
                   }
                   className="w-full rounded-xl border bg-card p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
                 >

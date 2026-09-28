@@ -2,16 +2,12 @@
 
 import { useState } from "react";
 import {
-  Megaphone,
   Plus,
   Clock,
   Trash2,
-  AlertTriangle,
-  CheckCircle2,
   Calendar,
   X,
   Database,
-  Sparkles,
 } from "lucide-react";
 
 interface Announcement {
@@ -24,6 +20,8 @@ interface Announcement {
   durationDays: number;
   isExpired: boolean;
 }
+
+type AnnouncementCategory = "General" | "Mantenimiento" | "Asamblea" | "Urgente";
 
 export default function AnunciosPage() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([
@@ -66,7 +64,7 @@ export default function AnunciosPage() {
   const [formData, setFormData] = useState({
     title: "",
     content: "",
-    category: "General" as "General" | "Mantenimiento" | "Asamblea" | "Urgente",
+    category: "General" as AnnouncementCategory,
     durationDays: 3,
   });
 
@@ -107,7 +105,6 @@ export default function AnunciosPage() {
     setAnnouncements(announcements.filter((a) => !a.isExpired));
   };
 
-  const activeCount = announcements.filter((a) => !a.isExpired).length;
   const expiredCount = announcements.filter((a) => a.isExpired).length;
 
   return (
@@ -239,7 +236,7 @@ export default function AnunciosPage() {
                 <select
                   value={formData.category}
                   onChange={(e) =>
-                    setFormData({ ...formData, category: e.target.value as any })
+                    setFormData({ ...formData, category: e.target.value as AnnouncementCategory })
                   }
                   className="w-full rounded-xl border bg-card p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-900"
                 >

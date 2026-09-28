@@ -1,0 +1,224 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { Truck, Plus, CheckCircle } from "lucide-react";
+
+interface MovingRequest {
+  id: string;
+  request_type: string;
+  resident_name: string;
+  document: string;
+  moving_company?: string;
+  vehicle_plate?: string;
+  scheduled_date: string;
+  scheduled_time: string;
+  status: string;
+  rejection_reason?: string;
+}
+
+export default function ResidenteTrasteosPage() {
+  const [requests, setRequests] = useState<MovingRequest[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [formData, setFormData] = useState({
+    request_type: "Salida (Retiro)",
+    resident_name: "",
+    document: "",
+    moving_company: "",
+    vehicle_plate: "",
+    scheduled_date: "",
+    scheduled_time: "08:00 AM - 12:00 PM",
+    notes: "",
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetch("/api/residente/trasteos")
+      .then((res) => res.json())
+      .then((data) => {
+        if (isMounted) setRequests(data.requests || []);
+      })
+      .catch(() => console.error("Error al cargar trasteos"))
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const refreshRequests = async () => {
+    try {
+      const res = await fetch("/api/residente/trasteos");
+      const data = await res.json();
+      if (res.ok) setRequests(data.requests || []);
+    } catch {
+      console.error("Error al actualizar trasteos");
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    setMessage(null);
+
+    try {
+      const res = await fetch("/api/residente/trasteos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (!res.ok) throw new Error("Error al solicitar trasteo");
+
+      setMessage("¡Solicitud de trasteo enviada a la administración!");
+      setShowModal(false);
+      refreshRequests();
+    } catch (err: unknown) {
+      setMessage(err instanceof Error ? err.message : "Error al solicitar");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <Truck className="w-5 h-5 text-indigo-400" /> Permisos de Trasteo
+          </h2>
+          <p className="text-xs text-slate-400 mt-0.5">Solicite autorización para ingreso o retiro de mudanzas</p>
+        </div>
+        <button
+          onClick={() => setShowModal(true)}
+          className="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold flex items-center gap-1"
+        >
+          <Plus className="w-4 h-4" /> Solicitar
+        </button>
+      </div>
+
+      {message && (
+        <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs rounded-lg flex items-center gap-2">
+          <CheckCircle className="w-4 h-4 shrink-0" />
+          <span>{message}</span>
+        </div>
+      )}
+
+      {loading ? (
+        <p className="text-xs text-slate-500">Cargando solicitudes...</p>
+      ) : requests.length > 0 ? (
+        <div className="space-y-3 text-xs">
+          {requests.map((r) => (
+            <div key={r.id} className="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-white text-sm">{r.request_type}</span>
+                <span
+                  className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
+                    r.status === "Aprobado"
+                      ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                      : r.status === "Pendiente"
+                      ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
+                      : "bg-red-500/10 text-red-400 border border-red-500/20"
+                  }`}
+                >
+                  {r.status}
+                </span>
+              </div>
+
+              <div className="text-slate-300">
+                <p><strong>Fecha programada:</strong> {r.scheduled_date} ({r.scheduled_time})</p>
+                <p><strong>Responsable:</strong> {r.resident_name} - C.C. {r.document}</p>
+                {r.moving_company && <p><strong>Empresa de mudanza:</strong> {r.moving_company}</p>}
+              </div>
+
+              {r.status === "Rechazado" && r.rejection_reason && (
+                <div className="p-2 bg-red-500/10 text-red-400 rounded border border-red-500/20 text-[11px]">
+                  <strong>Motivo de rechazo:</strong> {r.rejection_reason}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p className="text-xs text-slate-500 text-center py-6">No registra solicitudes de trasteo.</p>
+      )}
+
+      {/* Modal Modal */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center p-4 z-50">
+          <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 w-full max-w-sm space-y-4">
+            <h3 className="font-bold text-white text-base">Solicitar Permiso de Trasteo</h3>
+            <form onSubmit={handleSubmit} className="space-y-3 text-xs">
+              <div>
+                <label className="block text-slate-300 font-medium mb-1">Tipo de Trasteo</label>
+                <select
+                  value={formData.request_type}
+                  onChange={(e) => setFormData({ ...formData, request_type: e.target.value })}
+                  className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-white"
+                >
+                  <option value="Salida (Retiro)">Salida (Retiro de Mudanza)</option>
+                  <option value="Entrada (Ingreso)">Entrada (Ingreso de Mudanza)</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-medium mb-1">Nombre Completo Responsable</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.resident_name}
+                  onChange={(e) => setFormData({ ...formData, resident_name: e.target.value })}
+                  placeholder="Ej: Ana María Rodríguez"
+                  className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-medium mb-1">Cédula / Documento</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.document}
+                  onChange={(e) => setFormData({ ...formData, document: e.target.value })}
+                  placeholder="Ej: 10123456"
+                  className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-white"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-medium mb-1">Fecha Programada</label>
+                <input
+                  type="date"
+                  required
+                  value={formData.scheduled_date}
+                  onChange={(e) => setFormData({ ...formData, scheduled_date: e.target.value })}
+                  className="w-full bg-slate-800 border border-slate-700 rounded-lg p-2.5 text-white"
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowModal(false)}
+                  className="px-3 py-2 bg-slate-800 text-slate-300 rounded-lg font-medium"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg"
+                >
+                  Enviar Solicitud
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
