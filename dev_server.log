@@ -5,13 +5,11 @@
 ▲ Next.js 16.3.6 (Turbopack)
 - Local:         http://localhost:3000
 - Network:       http://192.168.0.2:3000
-✓ Ready in 536ms
-✓ Running next.config.ts took 46ms
+✓ Ready in 539ms
+✓ Running next.config.ts took 43ms
 
- HEAD / 307 in 3.1s (next.js: 2.9s, application-code: 243ms)
- GET /admin 200 in 1171ms (next.js: 917ms, application-code: 253ms)
- GET /admin/visitantes 200 in 510ms (next.js: 399ms, application-code: 110ms)
- GET /admin/paqueteria 200 in 434ms (next.js: 347ms, application-code: 87ms)
- GET /admin/zonas-comunes 200 in 436ms (next.js: 334ms, application-code: 102ms)
- GET /admin/trasteos 200 in 432ms (next.js: 330ms, application-code: 101ms)
- GET /admin/anuncios 200 in 455ms (next.js: 356ms, application-code: 99ms)
+ HEAD /super-admin 200 in 3.3s (next.js: 2.9s, application-code: 348ms)
+ GET /super-admin 200 in 103ms (next.js: 10ms, application-code: 93ms)
+ GET /super-admin/conjuntos 200 in 871ms (next.js: 753ms, application-code: 118ms)
+ GET /super-admin/administradores 200 in 509ms (next.js: 389ms, application-code: 120ms)
+ GET /super-admin/notificaciones 200 in 819ms (next.js: 670ms, application-code: 149ms)

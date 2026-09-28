@@ -1,6 +1,6 @@
 -- ==========================================
 -- ESTRUCTURA BASE DE DATOS SUPABASE - ADMINIS
--- Conjunto Residencial (Parqueaderos, Visitantes, Paquetes, Zonas Comunes, Trasteos, Anuncios)
+-- Conjunto Residencial & Portal Súper Admin
 -- ==========================================
 
 -- 1. EXTENSIONES
@@ -89,7 +89,47 @@ CREATE TABLE IF NOT EXISTS public.announcements (
     is_expired BOOLEAN DEFAULT FALSE
 );
 
--- 8. FUNCIÓN Y TRIGGER PARA LIMPIEZA DE ANUNCIOS EXPIRADOS (OPTIMIZACIÓN PLAN GRATUITO SUPABASE)
+-- 8. TABLAS DE SÚPER ADMIN / DUEÑO DE LA PLATAFORMA
+
+-- 8.1 TABLA DE CONJUNTOS RESIDENCIALES
+CREATE TABLE IF NOT EXISTS public.complexes (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(200) NOT NULL,
+    nip VARCHAR(50) NOT NULL UNIQUE,
+    address TEXT NOT NULL,
+    email VARCHAR(150) NOT NULL,
+    phone VARCHAR(30) NOT NULL,
+    subscription_status VARCHAR(20) CHECK (subscription_status IN ('Al día', 'Pendiente', 'Suspendido')) DEFAULT 'Al día',
+    subscription_due_date DATE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 8.2 TABLA DE USUARIOS ADMINISTRADORES
+CREATE TABLE IF NOT EXISTS public.admin_users (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    full_name VARCHAR(150) NOT NULL,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    email VARCHAR(150) NOT NULL,
+    phone VARCHAR(30) NOT NULL,
+    address TEXT,
+    complex_id UUID REFERENCES public.complexes(id) ON DELETE SET NULL,
+    status VARCHAR(20) CHECK (status IN ('Activo', 'Suspendido')) DEFAULT 'Activo',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 8.3 TABLA DE NOTIFICACIONES Y COMUNICADOS DEL SISTEMA (DUEÑO -> ADMINISTRADORES)
+CREATE TABLE IF NOT EXISTS public.system_notifications (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    title VARCHAR(200) NOT NULL,
+    message TEXT NOT NULL,
+    category VARCHAR(50) CHECK (category IN ('Actualización', 'Mantenimiento', 'Urgente', 'Informativo')) DEFAULT 'Actualización',
+    target_role VARCHAR(50) DEFAULT 'administradores',
+    sent_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 9. FUNCIÓN Y TRIGGER PARA LIMPIEZA DE ANUNCIOS EXPIRADOS (OPTIMIZACIÓN PLAN GRATUITO SUPABASE)
 CREATE OR REPLACE FUNCTION purge_expired_announcements()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -100,18 +140,24 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- 9. SEGURIDAD Y POLÍTICAS RLS (Row Level Security)
+-- 10. SEGURIDAD Y POLÍTICAS RLS (Row Level Security)
 ALTER TABLE public.units ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.visitors ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.parcels ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.reservations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.moving_requests ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.announcements ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.complexes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.admin_users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.system_notifications ENABLE ROW LEVEL SECURITY;
 
--- Politica permisiva por defecto para desarrollo con Supabase
+-- Política permisiva por defecto para desarrollo con Supabase
 CREATE POLICY "Acceso total para administradores" ON public.units FOR ALL USING (true);
 CREATE POLICY "Acceso total para administradores" ON public.visitors FOR ALL USING (true);
 CREATE POLICY "Acceso total para administradores" ON public.parcels FOR ALL USING (true);
 CREATE POLICY "Acceso total para administradores" ON public.reservations FOR ALL USING (true);
 CREATE POLICY "Acceso total para administradores" ON public.moving_requests FOR ALL USING (true);
 CREATE POLICY "Acceso total para administradores" ON public.announcements FOR ALL USING (true);
+CREATE POLICY "Acceso total para super admin" ON public.complexes FOR ALL USING (true);
+CREATE POLICY "Acceso total para super admin" ON public.admin_users FOR ALL USING (true);
+CREATE POLICY "Acceso total para super admin" ON public.system_notifications FOR ALL USING (true);
