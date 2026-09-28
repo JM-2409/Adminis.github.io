@@ -5,11 +5,28 @@
 ▲ Next.js 16.3.6 (Turbopack)
 - Local:         http://localhost:3000
 - Network:       http://192.168.0.2:3000
-✓ Ready in 539ms
-✓ Running next.config.ts took 43ms
+- Environments: .env.local
+✓ Ready in 582ms
+✓ Running next.config.ts took 46ms
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead.
 
- HEAD /super-admin 200 in 3.3s (next.js: 2.9s, application-code: 348ms)
- GET /super-admin 200 in 103ms (next.js: 10ms, application-code: 93ms)
- GET /super-admin/conjuntos 200 in 871ms (next.js: 753ms, application-code: 118ms)
- GET /super-admin/administradores 200 in 509ms (next.js: 389ms, application-code: 120ms)
- GET /super-admin/notificaciones 200 in 819ms (next.js: 670ms, application-code: 149ms)
+  To migrate automatically, run:
+  npx @next/codemod@canary middleware-to-proxy .
+
+  Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+
+ HEAD /login 200 in 3.2s (next.js: 2.8s, proxy.ts: 136ms, application-code: 260ms)
+ GET /api/seed 500 in 1685ms (next.js: 728ms, application-code: 957ms)
+ GET /api/seed 200 in 1197ms (next.js: 10ms, application-code: 1187ms)
+ GET /login 200 in 101ms (next.js: 8ms, proxy.ts: 18ms, application-code: 75ms)
+ POST /api/auth/login 200 in 639ms (next.js: 328ms, application-code: 310ms)
+ GET /admin 200 in 438ms (next.js: 20ms, proxy.ts: 12ms, application-code: 405ms)
+ GET /admin 200 in 2.4s (next.js: 1726ms, proxy.ts: 11ms, application-code: 633ms)
+ GET /login 200 in 83ms (next.js: 12ms, proxy.ts: 6ms, application-code: 65ms)
+ POST /api/auth/login 200 in 356ms (next.js: 5ms, application-code: 351ms)
+ GET /admin 200 in 258ms (next.js: 8ms, proxy.ts: 8ms, application-code: 242ms)
+ GET /admin 200 in 242ms (next.js: 12ms, proxy.ts: 11ms, application-code: 220ms)
+ GET /login 200 in 67ms (next.js: 7ms, proxy.ts: 6ms, application-code: 54ms)
+ POST /api/auth/login 200 in 263ms (next.js: 3ms, application-code: 259ms)
+ GET /admin 200 in 296ms (next.js: 11ms, proxy.ts: 7ms, application-code: 278ms)
+ GET /admin 200 in 305ms (next.js: 10ms, proxy.ts: 16ms, application-code: 280ms)

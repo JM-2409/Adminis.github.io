@@ -10,12 +10,12 @@ import {
   Truck,
   Building2,
   Megaphone,
+  AlertTriangle,
   Settings,
   ShieldCheck,
   ShieldAlert,
   ChevronLeft,
   ChevronRight,
-  ArrowLeftRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -31,25 +31,31 @@ export const menuItems = [
     title: "Visitantes y Parqueadero",
     icon: Car,
     href: "/admin/visitantes",
-    badge: "5 en sitio",
+    badge: null,
   },
   {
     title: "Paquetería",
     icon: PackageCheck,
     href: "/admin/paqueteria",
-    badge: "8 pend.",
+    badge: null,
   },
   {
     title: "Zonas Comunes",
     icon: CalendarDays,
     href: "/admin/zonas-comunes",
-    badge: "2 reser.",
+    badge: null,
   },
   {
     title: "Autorización Trasteos",
     icon: Truck,
     href: "/admin/trasteos",
-    badge: "3 pend.",
+    badge: null,
+  },
+  {
+    title: "Gestión Infracciones",
+    icon: AlertTriangle,
+    href: "/admin/infracciones",
+    badge: "Sanciones",
   },
   {
     title: "Unidades y Residentes",
@@ -61,7 +67,7 @@ export const menuItems = [
     title: "Anuncios y Avisos",
     icon: Megaphone,
     href: "/admin/anuncios",
-    badge: "Activos",
+    badge: null,
   },
   {
     title: "Configuración",
@@ -83,25 +89,25 @@ export function Sidebar() {
       )}
     >
       {/* Header Logo */}
-      <div className="flex h-16 items-center justify-between px-4 border-b">
+      <div className="flex h-16 items-center justify-between px-4 border-b border-slate-800">
         <div className="flex items-center gap-3 overflow-hidden">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground font-bold shadow">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white font-bold shadow">
             <ShieldCheck className="h-6 w-6 text-white" />
           </div>
           {!collapsed && (
             <div className="flex flex-col">
-              <span className="font-bold text-base leading-tight tracking-tight text-slate-900 dark:text-slate-100">
-                Adminis
+              <span className="font-bold text-base leading-tight tracking-tight text-white">
+                ParkControl
               </span>
-              <span className="text-xs text-muted-foreground font-medium">
-                Portal de Administración
+              <span className="text-xs text-slate-400 font-medium">
+                Admin Conjunto
               </span>
             </div>
           )}
         </div>
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="rounded-lg p-1.5 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
+          className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
           title={collapsed ? "Expandir menú" : "Colapsar menú"}
         >
           {collapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
@@ -121,11 +127,11 @@ export function Sidebar() {
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all group relative",
                 isActive
-                  ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900 shadow-sm font-semibold"
-                  : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100"
+                  ? "bg-blue-600 text-white shadow-sm font-semibold"
+                  : "text-slate-400 hover:bg-slate-800 hover:text-white"
               )}
             >
-              <Icon className={cn("h-5 w-5 shrink-0", isActive ? "text-white dark:text-slate-900" : "text-slate-500 group-hover:text-slate-700 dark:text-slate-400 dark:group-hover:text-slate-200")} />
+              <Icon className={cn("h-5 w-5 shrink-0", isActive ? "text-white" : "text-slate-400 group-hover:text-slate-200")} />
               {!collapsed && <span className="truncate">{item.title}</span>}
 
               {!collapsed && item.badge && (
@@ -133,8 +139,8 @@ export function Sidebar() {
                   className={cn(
                     "ml-auto text-xs px-2 py-0.5 rounded-full font-semibold",
                     isActive
-                      ? "bg-white/20 text-white dark:bg-slate-900/20 dark:text-slate-900"
-                      : "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300"
+                      ? "bg-white/20 text-white"
+                      : "bg-blue-950 text-blue-300 border border-blue-800"
                   )}
                 >
                   {item.badge}
@@ -151,30 +157,30 @@ export function Sidebar() {
         })}
 
         {/* Link to Super Admin Platform Owner */}
-        <div className="pt-4 border-t dark:border-slate-800 mt-4">
+        <div className="pt-4 border-t border-slate-800 mt-4">
           <Link
             href="/super-admin"
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/60 transition-all"
+            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-indigo-400 hover:bg-indigo-950/40 border border-indigo-800/60 transition-all"
           >
-            <ShieldAlert className="h-5 w-5 shrink-0 text-indigo-600 dark:text-indigo-400" />
+            <ShieldAlert className="h-5 w-5 shrink-0 text-indigo-400" />
             {!collapsed && <span className="truncate font-semibold">Panel Súper Admin</span>}
           </Link>
         </div>
       </nav>
 
       {/* User profile footer */}
-      <div className="border-t p-3">
-        <div className="flex items-center gap-3 rounded-lg p-2 bg-slate-50 dark:bg-slate-800/50">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white font-bold text-xs">
+      <div className="border-t border-slate-800 p-3">
+        <div className="flex items-center gap-3 rounded-lg p-2 bg-slate-900">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-600 text-white font-bold text-xs">
             AD
           </div>
           {!collapsed && (
             <div className="flex flex-col min-w-0 flex-1">
-              <span className="text-xs font-semibold truncate text-slate-800 dark:text-slate-200">
+              <span className="text-xs font-semibold truncate text-white">
                 Administración
               </span>
-              <span className="text-[11px] text-emerald-600 font-medium dark:text-emerald-400 truncate">
-                Conjunto Bosques del Sol
+              <span className="text-[11px] text-blue-400 font-medium truncate">
+                Conjunto Residencial
               </span>
             </div>
           )}
