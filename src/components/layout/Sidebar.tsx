@@ -56,6 +56,12 @@ export const menuItems = [
     badge: null,
   },
   {
+    title: "Empleados y Vigilancia",
+    icon: ShieldCheck,
+    href: "/admin/empleados",
+    badge: null,
+  },
+  {
     title: "Anuncios y Avisos",
     icon: Megaphone,
     href: "/admin/anuncios",

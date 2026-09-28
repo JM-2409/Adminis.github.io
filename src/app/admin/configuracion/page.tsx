@@ -7,6 +7,8 @@ import {
   Clock,
   Save,
   CheckCircle2,
+  Layers,
+  Home,
 } from "lucide-react";
 
 export default function ConfiguracionPage() {
@@ -19,6 +21,10 @@ export default function ConfiguracionPage() {
     socialRoomFee: 150000,
     bbqFee: 80000,
     autoPurgeAnnouncements: true,
+    // Estructura de inmuebles
+    singleLevelNomenclature: false, // false = 2 niveles (Ej: Torre + Apto), true = 1 nivel (Ej: Solo Casa/Lote)
+    level1Name: "Torre / Bloque / Manzana",
+    level2Name: "Apartamento / Casa",
   });
 
   const handleSave = (e: React.FormEvent) => {
@@ -28,13 +34,13 @@ export default function ConfiguracionPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-4xl overflow-x-hidden">
+    <div className="space-y-6 max-w-4xl overflow-x-hidden text-slate-100">
       <div>
         <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white">
           Configuración del Conjunto
         </h1>
         <p className="text-xs sm:text-sm text-slate-400">
-          Ajuste de parámetros operativos, cupos de parqueadero y tarifas de zonas comunes.
+          Ajuste de parámetros operativos, cupos de parqueadero, tarifas y nomenclatura de inmuebles.
         </p>
       </div>
 
@@ -76,6 +82,91 @@ export default function ConfiguracionPage() {
                 className="w-full rounded-xl border border-slate-700 bg-slate-900 p-2.5 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
             </div>
+          </div>
+        </div>
+
+        {/* Nomenclatura y Estructura de Inmuebles */}
+        <div className="rounded-2xl border border-slate-800 bg-[#111827] p-6 shadow-md space-y-4">
+          <h2 className="text-base font-bold text-white flex items-center gap-2">
+            <Layers className="h-5 w-5 text-amber-400" /> Estructura y Nomenclatura de Inmuebles
+          </h2>
+          <p className="text-xs text-slate-400">
+            Defina cómo se organizan los inmuebles en su conjunto (ej. por Torres y Aptos, por Manzanas y Casas, o solo por Número de Casa/Lote).
+          </p>
+
+          <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
+            <label className="flex items-center gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={config.singleLevelNomenclature}
+                onChange={(e) =>
+                  setConfig({ ...config, singleLevelNomenclature: e.target.checked })
+                }
+                className="h-4 w-4 rounded border-slate-700 bg-slate-900 text-emerald-500 focus:ring-emerald-500"
+              />
+              <div>
+                <span className="text-xs font-bold text-slate-200">
+                  Usar nomenclatura de Nivel Único (Solo Número de Casa o Lote)
+                </span>
+                <span className="text-[11px] text-slate-400 block">
+                  Marque esta casilla si el conjunto solo consta de Casas o Lotes numerados sin divisiones de Torres, Bloques ni Manzanas.
+                </span>
+              </div>
+            </label>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+            {!config.singleLevelNomenclature ? (
+              <>
+                <div>
+                  <label className="text-xs font-bold text-slate-300 block mb-1">
+                    Nombre del Sector / Agrupación (Nivel 1)
+                  </label>
+                  <input
+                    type="text"
+                    value={config.level1Name}
+                    onChange={(e) => setConfig({ ...config, level1Name: e.target.value })}
+                    placeholder="Ej: Torre, Bloque, Manzana"
+                    className="w-full rounded-xl border border-slate-700 bg-slate-900 p-2.5 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                  <span className="text-[11px] text-slate-500 mt-1 block">
+                    Ejemplos: "Torre A", "Bloque 3", "Manzana C"
+                  </span>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-slate-300 block mb-1">
+                    Nombre del Número de Inmueble (Nivel 2)
+                  </label>
+                  <input
+                    type="text"
+                    value={config.level2Name}
+                    onChange={(e) => setConfig({ ...config, level2Name: e.target.value })}
+                    placeholder="Ej: Apartamento, Casa, Interior"
+                    className="w-full rounded-xl border border-slate-700 bg-slate-900 p-2.5 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                  <span className="text-[11px] text-slate-500 mt-1 block">
+                    Ejemplos: "Apto 301", "Casa 12"
+                  </span>
+                </div>
+              </>
+            ) : (
+              <div className="md:col-span-2">
+                <label className="text-xs font-bold text-slate-300 block mb-1">
+                  Etiqueta Única de Inmueble
+                </label>
+                <input
+                  type="text"
+                  value={config.level2Name}
+                  onChange={(e) => setConfig({ ...config, level2Name: e.target.value })}
+                  placeholder="Ej: Casa, Lote"
+                  className="w-full rounded-xl border border-slate-700 bg-slate-900 p-2.5 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+                <span className="text-[11px] text-slate-500 mt-1 block">
+                  En los formularios de residentes solo se solicitará un campo (Ej: "Casa 45").
+                </span>
+              </div>
+            )}
           </div>
         </div>
 
