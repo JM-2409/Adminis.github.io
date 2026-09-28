@@ -12,9 +12,10 @@ import {
   Megaphone,
   Settings,
   ShieldCheck,
+  ShieldAlert,
   ChevronLeft,
   ChevronRight,
-  LogOut,
+  ArrowLeftRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -148,6 +149,17 @@ export function Sidebar() {
             </Link>
           );
         })}
+
+        {/* Link to Super Admin Platform Owner */}
+        <div className="pt-4 border-t dark:border-slate-800 mt-4">
+          <Link
+            href="/super-admin"
+            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/60 transition-all"
+          >
+            <ShieldAlert className="h-5 w-5 shrink-0 text-indigo-600 dark:text-indigo-400" />
+            {!collapsed && <span className="truncate font-semibold">Panel Súper Admin</span>}
+          </Link>
+        </div>
       </nav>
 
       {/* User profile footer */}
