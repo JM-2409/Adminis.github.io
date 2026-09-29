@@ -91,8 +91,13 @@ export const supabaseAdmin = {
           single: async (): Promise<{ data: Record<string, unknown> | null; error: unknown }> => {
             const res = await executeSelect();
             if (res.error) {
-              const localData = readLocalDb()[table] || [];
-              const found = localData[0] || null;
+              const db = readLocalDb();
+              let items = db[table] || [];
+
+              for (const filter of filters) {
+                items = items.filter(filter);
+              }
+              const found = items[0] || null;
               return { data: found, error: found ? null : { message: "Not found" } };
             }
             return {
