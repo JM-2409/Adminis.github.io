@@ -53,7 +53,7 @@ export default function LoginPage() {
           </div>
         </div>
         <h2 className="text-3xl font-extrabold tracking-tight text-white">
-          ParkControl Total
+          ConjuntoControl Total
         </h2>
         <p className="mt-2 text-sm text-slate-400">
           Plataforma Integral de Administración de Conjuntos Residenciales
