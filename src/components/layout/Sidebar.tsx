@@ -98,7 +98,7 @@ export function Sidebar() {
           {!collapsed && (
             <div className="flex flex-col">
               <span className="font-bold text-base leading-tight tracking-tight text-white">
-                ParkControl
+                ConjuntoControl
               </span>
               <span className="text-xs text-slate-400 font-medium">
                 Admin Conjunto
